@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Galeri Franchise Film</title>
+    <style>
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top, #0a0a0a, #1b0034);
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            text-shadow: 0 0 15px #00ffff;
+            margin-bottom: 10px;
+        }
+
+        .hr-line {
+            height: 2px;
+            background: cyan;
+            margin: 20px auto;
+            width: 90%;
+        }
+
+        /* Logo-based selector */
+        .franchise-logos {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin: 30px 0;
+        }
+
+        .franchise-item {
+            width: 120px;
+            text-align: center;
+            cursor: pointer;
+            color: white;
+            user-select: none;
+        }
+
+        .franchise-item img.franchise-logo {
+            width: 120px;
+            height: 80px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 8px auto;
+            transition: transform 0.18s ease, filter 0.18s ease;
+        }
+
+        .franchise-item:hover img.franchise-logo {
+            transform: translateY(-4px) scale(1.03);
+            filter: drop-shadow(0 0 10px cyan);
+        }
+
+        .franchise-name {
+            font-size: 0.9em;
+            margin-top: 4px;
+        }
+
+        .franchise-btn {
+            padding: 10px 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid cyan;
+            color: white;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .franchise-btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .franchise-btn.active {
+            background: cyan;
+            color: #0a0a0a;
+            font-weight: bold;
+        }
+
+        /* FILM GRID */
+        /* .film-grid old style removed, only flex/scroll style below */
+
+        .film-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid cyan;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            min-width: 180px;
+            width: 180px;
+            height: 320px;
+        }
+
+        .film-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .film-card img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+        }
+
+        .film-card h4 {
+            margin: 10px;
+            font-size: 0.85em;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .franchise-section {
+            display: none;
+        }
+
+        .franchise-section.active {
+            display: block;
+        }
+
+        .section-title {
+            text-align: center;
+        }
+        .film-grid {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 20px;
+            justify-content: flex-start;
+            margin-top: 20px;
+            margin-left: 40px;
+            margin-right: 40px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 16px;
+            scrollbar-color: #00ffff #222;
+            scrollbar-width: thin;
+            height: 400px;
+        }
+        .film-grid::-webkit-scrollbar {
+            height: 12px;
+            background: #222;
+        }
+        .film-grid::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 6px;
+        }
+        .film-grid::-webkit-scrollbar-track {
+            background: #222;
+        }
+
+        /* Search input styling */
+        .search-box {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 40px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1em;
+            border: 2px solid cyan;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .film-card.hidden {
+            display: none;
+        }
+
+        /* MODAL STYLES */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 2px solid cyan;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: white;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: cyan;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #00ffff;
+        }
+
+        .modal-title {
+            clear: both;
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px cyan;
+        }
+
+        .modal-release {
+            color: #00ffff;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .modal-director {
+            color: #00ffff;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .modal-section-title {
+            font-size: 1.2em;
+            color: #00ffff;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid cyan;
+            padding-bottom: 8px;
+        }
+
+        .modal-synopsis {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .modal-cast {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-trailer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .modal-trailer-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .modal-trailer-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid cyan;
+            border-radius: 8px;
+        }
+
+        .modal-trailer-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 24px;
+            background: rgba(0, 255, 255, 0.2);
+            border: 2px solid cyan;
+            color: cyan;
+            text-decoration: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-trailer-link:hover {
+            background: rgba(0, 255, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        .modal-platform {
+            color: #00ffff;
+            font-size: 1em;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid cyan;
+            border-radius: 6px;
+            display: inline-block;
+        }
+</style>
+<body>
+
+<h1>🎬 Galeri Franchise Film</h1>
+<div class="hr-line"></div>
+
+<!-- FRANCHISE LOGOS -->
+<div class="franchise-logos" aria-label="Pilih Franchise">
+    <div class="franchise-item" onclick="showFranchise('marvel', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="logo marvel.jpg" alt="Marvel logo (PNG)">
+        <div class="franchise-name">Marvel</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('dc', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="DC logo.png" alt="DC logo (PNG)">
+        <div class="franchise-name">DC</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('starwars', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="star wars logo.png" alt="Star Wars logo (PNG)">
+        <div class="franchise-name">Star Wars</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('alien', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="logo alien.jpg" alt="Alien logo (PNG)">
+        <div class="franchise-name">Alien</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('texas', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="TCM logo.png" alt="Texas Chainsaw logo (PNG)">
+        <div class="franchise-name">Texas</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('frankenstein', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="frankenstein logo.png" alt="Frankenstein logo (PNG)">
+        <div class="franchise-name">Frankenstein</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('terminator', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="terminator logo.png" alt="Terminator logo (PNG)">
+        <div class="franchise-name">Terminator</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('predator', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="[CITYPNG.COM]Predator Logo PNG - 3000x3000.png" alt="Predator logo">
+        <div class="franchise-name">Predator</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('jaws', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="jaws logo (2).png" alt="Jaws logo (PNG)">
+        <div class="franchise-name">Jaws</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('conjuring', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="conjuring logo.png" alt="Conjuring logo (PNG)">
+        <div class="franchise-name">Conjuring</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('planetoftheapes', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="POTA logo.png" alt="Planet of the Apes logo (PNG)">
+        <div class="franchise-name">Planet of the Apes</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('jurassicpark', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="jurrasic park logo.png" alt="Jurassic Park logo (PNG)">
+        <div class="franchise-name">Jurassic Park</div>
+    </div>
+    <div class="franchise-item" onclick="showFranchise('scream', this)" role="button" tabindex="0">
+        <img class="franchise-logo" src="scream logo.png" alt="Scream logo (PNG)">
+        <div class="franchise-name">Scream</div>
+    </div>
+</div>
+
+<!-- MARVEL -->
+<div id="marvel" class="franchise-section active">
+    <h2 class="section-title">Marvel Cinematic Universe</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Marvel...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick='openModal("Iron Man (2008)", "2008-05-02", "Jon Favreau", "Tony Stark, seorang jenius pengusaha dan penemu senjata, mengalami perubahan total setelah ditangkap oleh kelompok teroris Afghanistan. Dia menciptakan kostum lapis baja canggih bernama Iron Man untuk melarikan diri dan kemudian menggunakannya untuk menyelamatkan dunia dari ancaman global.", "Robert Downey Jr., Gwyneth Paltrow, Terrence Howard, Jeff Bridges", "https://www.youtube.com/embed/8dgyx5aJr5E", "Disney+")'>
+            <img src="iron man.jpeg" alt="Iron Man">
+            <h4>Iron Man (2008)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Incredible Hulk (2008)', '2008-06-13', 'Louis Leterrier', 'Bruce Banner, seorang ilmuwan, mencari cara untuk mengontrol kekuatan Hulk yang mengerikan dalam tubuhnya. Dia bersembunyi dan berlatih untuk menguasai transformasinya sambil dikejar oleh militer.', 'Edward Norton, Liv Tyler, Tim Roth, William Hurt', 'https://www.youtube.com/embed/xLCdn92y-DY', 'Disney+')">
+            <img src="incredible_hulk.jpg" alt="The Incredible Hulk">
+            <h4>The Incredible Hulk (2008)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Iron Man 2 (2010)', '2010-05-07', 'Jon Favreau', 'Tony Stark menghadapi tantangan teknologi yang lebih besar saat pemerintah menginginkan Iron Man suit untuk keperluan militer. Sementara itu, musuh dari masa lalu muncul untuk menghancurkannya.', 'Robert Downey Jr., Gwyneth Paltrow, Scarlett Johansson, Don Cheadle', 'https://www.youtube.com/embed/kSXUzHvW2sE', 'Disney+')">
+            <img src="iron_man_two.jpg" alt="Iron Man 2">
+            <h4>Iron Man 2 (2010)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Thor (2011)', '2011-05-06', 'Kenneth Branagh', 'Thor, dewa petir dari Asgard, dibuang ke Bumi oleh ayahnya Odin sebagai hukuman atas kesombongannya. Di Bumi, dia bertemu Jane Foster dan belajar tentang kerendahan hati sambil mempersiapkan diri melawan kakak jahatnya Loki.', 'Chris Hemsworth, Natalie Portman, Tom Hiddleston, Anthony Hopkins', 'https://www.youtube.com/embed/JOddp-qTAoE', 'Disney+')">
+            <img src="thor_ver2.jpg" alt="Thor">
+            <h4>Thor (2011)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Captain America: The First Avenger (2011)', '2011-07-22', 'Joe Johnston', 'Steve Rogers, seorang prajurit berbakat yang ditolak dari layanan militer karena kondisinya, menerima serum super tentara yang mengubahnya menjadi Captain America. Dia memimpin pertarungan melawan pasukan Nazi HYDRA selama Perang Dunia II.', 'Chris Evans, Hayley Atwell, Hugo Weaving, Tommy Lee Jones', 'https://www.youtube.com/embed/JerVrbLldXw', 'Disney+')">
+            <img src="captain_america_the_first_avenger_ver2.jpg" alt="Captain America: The First Avenger">
+            <h4>Captain America: The First Avenger (2011)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Avengers (2012)', '2012-05-04', 'Joss Whedon', 'Tim pahlawan super terbaik dunia berkumpul untuk melindungi Bumi dari invasi alien. Iron Man, Captain America, Thor, Hulk, Black Widow, dan Hawkeye harus bekerja sama untuk menghentikan Loki dan tentaranya.', 'Robert Downey Jr., Chris Evans, Chris Hemsworth, Mark Ruffalo, Scarlett Johansson, Jeremy Renner, Tom Hiddleston', 'https://www.youtube.com/embed/eOrNdBpgMEw', 'Disney+')">
+            <img src="the avengers.jpg" alt="The Avengers">
+            <h4>The Avengers (2012)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Iron Man 3 (2013)', '2013-05-03', 'Shane Black', 'Setelah peristiwa New York, Tony Stark mengalami krisis identitas dan trauma. Dia harus menghadapi ancaman baru bernama The Mandarin sambil membangun Iron Man suit tanpa bergantung pada teknologi.', 'Robert Downey Jr., Gwyneth Paltrow, Don Cheadle, Guy Pearce, Rebecca Hall, Ben Kingsley', 'https://www.youtube.com/embed/wKtcmiKyS20', 'Disney+')">
+            <img src="iron_man_three_ver2.jpg" alt="Iron Man 3">
+            <h4>Iron Man 3 (2013)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Thor: The Dark World (2013)', '2013-11-08', 'Alan Taylor', 'Thor harus menyelamatkan Jane Foster dari ancaman kekuatan gelap kuno yang mengancam semua realm di pohon Yggdrasil. Dia mendapat bantuan dari saudara jahatnya Loki untuk menyelamatkan alam semesta.', 'Chris Hemsworth, Natalie Portman, Tom Hiddleston, Anthony Hopkins, Idris Elba', 'https://www.youtube.com/embed/Bleo-UY6Dhc', 'Disney+')">
+            <img src="thor_the_dark_world_ver2.jpg" alt="Thor: The Dark World">
+            <h4>Thor: The Dark World (2013)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Captain America: The Winter Soldier (2014)', '2014-04-04', 'Anthony Russo, Joe Russo', 'Steve Rogers bergabung dengan Natasha Romanoff untuk mengungkap konspirasi dalam organisasi SHIELD. Mereka menghadapi musuh misterius bernama Winter Soldier yang memiliki hubungan pribadi dengan masa lalu Steve.', 'Chris Evans, Scarlett Johansson, Sebastian Stan, Anthony Mackie, Robert Redford', 'https://www.youtube.com/embed/7SlILwFyk48', 'Disney+')">
+            <img src="captain_america_the_winter_soldier_ver2.jpg" alt="Captain America: The Winter Soldier">
+            <h4>Captain America: The Winter Soldier (2014)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Guardians of the Galaxy (2014)', '2014-08-01', 'James Gunn', 'Peter Quill, pencuri luar angkasa, bergabung dengan sekelompok penjahat untuk melawan pelindung galaksi yang jahat. Mereka membentuk Guardians of the Galaxy dan melindungi Bumi dari ancaman kosmik.', 'Chris Pratt, Zoe Saldana, Dave Bautista, Lee Pace, Michael Rooker, Karen Gillan', 'https://www.youtube.com/embed/d96cjJhvlMA', 'Disney+')">
+            <img src="guardians_of_the_galaxy_ver2.jpg" alt="Guardians of the Galaxy">
+            <h4>Guardians of the Galaxy (2014)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Avengers: Age of Ultron (2015)', '2015-05-01', 'Joss Whedon', 'Avengers dihadapkan pada ancaman baru bernama Ultron, sebuah AI yang diciptakan oleh Tony Stark untuk melindungi dunia tetapi malah ingin menghancurkan umat manusia. Tim harus bersatu lagi untuk menghentikannya.', 'Robert Downey Jr., Chris Evans, Chris Hemsworth, Mark Ruffalo, Scarlett Johansson, Jeremy Renner', 'https://www.youtube.com/embed/tmeOjFno6Do', 'Disney+')">
+            <img src="avengers_age_of_ultron_ver25.jpg" alt="Avengers: Age of Ultron">
+            <h4>The Avengers: Age of Ultron (2015)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Ant-Man (2015)', '2015-07-17', 'Peyton Reed', 'Scott Lang, seorang pencuri berbakat, dipilih oleh ilmuwan Hank Pym untuk mengenakan suit khusus yang dapat mengecilkan ukuran tubuh. Dia harus menggunakan kemampuan baru ini untuk menjalankan heist dan menyelamatkan dunia.', 'Paul Rudd, Michael Douglas, Evangeline Lilly, Corey Stoll', 'https://www.youtube.com/embed/pWdKf3MnFsw', 'Disney+')">
+            <img src="ant_man_ver3.jpg" alt="Ant-Man">
+            <h4>Ant-Man (2015)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Captain America: Civil War (2016)', '2016-05-06', 'Anthony Russo, Joe Russo', 'Tim Avengers terpecah ketika pemerintah menginginkan kontrol atas mereka. Steve Rogers dan Tony Stark berada di sisi yang berlawanan dalam konflik yang mengancam untuk menghancurkan persahabatan mereka.', 'Chris Evans, Robert Downey Jr., Scarlett Johansson, Sebastian Stan, Anthony Mackie, Elizabeth Olsen', 'https://www.youtube.com/embed/dKrVegVI0Us', 'Disney+')">
+            <img src="captain_america_civil_war_ver2.jpg" alt="Captain America: Civil War">
+            <h4>Captain America: Civil War (2016)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Doctor Strange (2016)', '2016-11-04', 'Scott Derrickson', 'Dr. Stephen Strange, seorang dokter bedah terkenal, mengalami kecelakaan yang merusak tangannya. Dalam pencarian penyembuhan, dia menemukan seni mistik dan menjadi Penyihir Agung yang melindungi dunia dari ancaman magis.', 'Benedict Cumberbatch, Chiwetel Ejiofor, Rachel McAdams, Mads Mikkelsen', 'https://www.youtube.com/embed/HSzx-getKKA', 'Disney+')">
+            <img src="doctor_strange_ver3.jpg" alt="Doctor Strange">
+            <h4>Doctor Strange (2016)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Guardians of the Galaxy Vol. 2 (2017)', '2017-05-05', 'James Gunn', 'Tim Guardians kembali dalam petualangan mereka mencari keadilan dan identitas. Peter Quill menemukan ayahnya sambil tim menghadapi tantangan baru yang mengubah dinamika kelompok mereka.', 'Chris Pratt, Zoe Saldana, Dave Bautista, Karen Gillan, Pom Klementieff, Michael Rooker, Kurt Russell', 'https://www.youtube.com/embed/rj7Phl22pEA', 'Disney+')">
+            <img src="guardians_of_the_galaxy_vol_two_ver4.jpg" alt="Guardians of the Galaxy Vol. 2">
+            <h4>Guardians of the Galaxy Vol. 2 (2017)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Spider-Man: Homecoming (2017)', '2017-07-07', 'Jon Watts', 'Peter Parker, pelajar SMA biasa yang adalah Spider-Man, bergabung dengan Tony Stark dan Avengers untuk pertama kali. Dia harus belajar menjadi pahlawan sejati sambil menghadapi penjahat baru bernama The Vulture.', 'Tom Holland, Robert Downey Jr., Marisa Tomei, Michael Keaton, Jon Favreau', 'https://www.youtube.com/embed/39udgmYkbtQ', 'Disney+')">
+            <img src="spiderman_homecoming.jpg" alt="Spider-Man: Homecoming">
+            <h4>Spider-Man: Homecoming (2017)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Thor: Ragnarok (2017)', '2017-11-03', 'Taika Waititi', 'Thor menghadapi takdir Asgard ketika kakak jahatnya Hela bangkit dan menghancurkan Mjolnir. Dia harus melarikan diri dari penjara planet Sakaar dan bersatu dengan Hulk untuk menyelamatkan Asgard dari kehancuran.', 'Chris Hemsworth, Tom Hiddleston, Cate Blanchett, Mark Ruffalo, Tessa Thompson, Jeff Goldblum', 'https://www.youtube.com/embed/ue80QwXMRHg', 'Disney+')">
+            <img src="thor_ragnarok.jpg" alt="Thor: Ragnarok">
+            <h4>Thor: Ragnarok (2017)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Black Panther (2018)', '2018-02-16', 'Ryan Coogler', 'T\'Challa, raja Wakanda, harus mempertahankan tahta dan melindungi negara misterius kaya teknologi ini dari ancaman internal dan eksternal. Dia menghadapi tantangan yang mengubah pandangannya tentang kepemimpinan dan tanggung jawab.', 'Chadwick Boseman, Michael B. Jordan, Lupita Nyong\'o, Danai Gurira, Angela Bassett', 'https://www.youtube.com/embed/-FKxVD1-EUs', 'Disney+')">
+            <img src="black_panther_ver3.jpg" alt="Black Panther">
+            <h4>Black Panther (2018)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Avengers: Infinity War (2018)', '2018-04-27', 'Anthony Russo, Joe Russo', 'Semua pahlawan Avengers berkumpul untuk pertarungan epik melawan Thanos, seorang titan gila yang mencari Batu Tak Terbatas untuk menghancurkan setengah dari alam semesta. Film ini mengakhiri dengan ending yang mengejutkan dan menghancurkan hati penggemar.', 'Robert Downey Jr., Chris Evans, Chris Hemsworth, Mark Ruffalo, Scarlett Johansson, Benedict Cumberbatch, Tom Holland', 'https://www.youtube.com/embed/6ZfuNTqWZy8', 'Disney+')">
+            <img src="avengers_infinity_war_ver2.jpg" alt="Avengers: Infinity War">
+            <h4>Avengers: Infinity War (2018)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Ant-Man and the Wasp (2018)', '2018-07-06', 'Peyton Reed', 'Scott Lang dan Hope van Dyne bekerja sama sebagai Ant-Man dan Wasp untuk menyelamatkan Janet van Dyne dari Quantum Realm. Mereka dihadapkan pada ancaman baru sambil mencoba menyelesaikan misi rahasia.', 'Paul Rudd, Evangeline Lilly, Michael Douglas, Michelle Pfeiffer, Walton Goggins', 'https://www.youtube.com/embed/jTxXIEUxk1k', 'Disney+')">
+            <img src="antman_and_the_wasp.jpg" alt="Ant-Man and the Wasp">
+            <h4>Ant-Man and the Wasp (2018)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Captain Marvel (2019)', '2019-03-08', 'Anna Boden, Ryan Fleck', 'Carol Danvers adalah pilot penerbangan yang ditangkap oleh alien Kree dan dilatih sebagai tentara elit mereka. Ketika dia menyadari kebenaran tentang masa lalunya, dia menjadi salah satu pahlawan paling kuat di alam semesta.', 'Brie Larson, Samuel L. Jackson, Ben Mendelsohn, Jude Law, Gemma Chan', 'https://www.youtube.com/embed/0LHxvxdpDYc', 'Disney+')">
+            <img src="captain_marvel_ver2.jpg" alt="Captain Marvel">
+            <h4>Captain Marvel (2019)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Avengers: Endgame (2019)', '2019-04-26', 'Anthony Russo, Joe Russo', 'Setelah kekalahan menghancurkan di Infinity War, Avengers yang tersisa mencari cara untuk mengalahkan Thanos dan menyelamatkan setengah dari alam semesta. Film ini adalah puncak Saga Infinity dan perjalanan Tony Stark.', 'Robert Downey Jr., Chris Evans, Chris Hemsworth, Mark Ruffalo, Scarlett Johansson, Jeremy Renner, Brie Larson', 'https://www.youtube.com/embed/TcMBFSGVi1c', 'Disney+')">
+            <img src="avengers_endgame_ver2.jpg" alt="Avengers: Endgame">
+            <h4>Avengers: Endgame (2019)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Spider-Man: Far From Home (2019)', '2019-07-02', 'Jon Watts', 'Setelah peristiwa Endgame, Peter Parker menikmati liburan sekolahnya yang menjadi penuh petualangan ketika menyelamatkan Eropa dari musuh baru bernama Mysterio. Dia harus menavigasi tanggung jawab Spider-Man dan kehidupan normal.', 'Tom Holland, Jake Gyllenhaal, Zendaya, Samuel L. Jackson, Cobie Smulders', 'https://www.youtube.com/embed/DhqvYc01kR4', 'Disney+')">
+            <img src="spiderman_far_from_home.jpg" alt="Spider-Man: Far From Home">
+            <h4>Spider-Man: Far From Home (2019)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Black Widow (2021)', '2021-07-09', 'Cate Shortland', 'Natasha Romanoff kembali ke masa lalunya yang gelap dan menghadapi konspirasi yang menghubungkan dirinya pada musuh-musuh lama. Film ini mengeksplorasi latar belakang dan motivasi karakter Black Widow.', 'Scarlett Johansson, Florence Pugh, David Harbour, Rachel Weisz, Ray Winstone', 'https://www.youtube.com/embed/6n_xCI-TOqA', 'Disney+')">
+            <img src="black_widow_ver2.jpg" alt="Black Widow">
+            <h4>Black Widow (2021)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Shang-Chi and the Legend of the Ten Rings (2021)', '2021-09-03', 'Destin Daniel Cretton', 'Shang-Chi adalah ahli bela diri yang dipaksa oleh ayahnya untuk melawan organisasi jahat. Dia menemukan kekuatan dari Sepuluh Cincin dan bergabung dengan Avengers untuk melindungi dunia.', 'Simu Liu, Awkwafina, Tony Leung, Michelle Yeoh, Ben Kingsley', 'https://www.youtube.com/embed/-OMw8-9qgsI', 'Disney+')">
+            <img src="shangchi_and_the_legend_of_the_ten_rings_ver2.jpg" alt="Shang-Chi">
+            <h4>Shang-Chi and the Legend of the Ten Rings (2021)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Eternals (2021)', '2021-11-05', 'Chlo&#233; Zhao', 'Eternals, ras makhluk abadi yang dipimpin oleh Ajak, muncul dari persembunyian untuk melindungi Bumi dari musuh kuno mereka. Film ini memperkenalkan tim baru dengan kekuatan kosmik dan sejarah misterius.', 'Gemma Chan, Richard Madden, Kumail Nanjiani, Lia McHugh, Brian Tyree Henry, Lauren Ridloff, Barry Keoghan, Don Lee', 'https://www.youtube.com/embed/kUMKVZo_SEk', 'Disney+')">
+            <img src="eternals_ver3.jpg" alt="Eternals">
+            <h4>Eternals (2021)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Spider-Man: No Way Home (2021)', '2021-12-17', 'Jon Watts', 'Peter Parker\'s dunia terpecah ketika multiverse terbuka dan karakter dari franchise Spider-Man lain muncul. Dia harus mengatasi konsekuensi keputusannya sambil menyelamatkan dunia dari ancaman multiversal.', 'Tom Holland, Zendaya, Benedict Cumberbatch, Jacob Batalon, Jamie Foxx, Alfred Molina, Willem Dafoe, Tobey Maguire, Andrew Garfield', 'https://www.youtube.com/embed/JfVOs4VSpmA', 'Disney+')">
+            <img src="spiderman_no_way_home_ver3.jpg" alt="Spider-Man: No Way Home">
+            <h4>Spider-Man: No Way Home (2021)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Doctor Strange in the Multiverse of Madness (2022)', '2022-05-06', 'Sam Raimi', 'Dr. Strange mengeksplorasi multiverse dengan Wanda Maximoff sambil menghadapi ancaman yang melebihi imajinasi. Film ini menampilkan horor dan petualangan dalam skala yang belum pernah dilihat di MCU.', 'Benedict Cumberbatch, Elizabeth Olsen, Chiwetel Ejiofor, Rachel McAdams, Xochitl Gomez, Michael Stults', 'https://www.youtube.com/embed/aWzlQ2cl6Is', 'Disney+')">
+            <img src="doctor_strange_in_the_multiverse_of_madness_ver2.jpg" alt="Doctor Strange">
+            <h4>Doctor Strange in the Multiverse of Madness (2022)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Thor: Love and Thunder (2022)', '2022-07-08', 'Taika Waititi', 'Thor menghadapi musuh baru bernama Gorr the God Butcher sambil menemukan cinta masa lalu dalam bentuk yang tidak terduga. Film ini menggabungkan humor, action, dan drama dalam petualangan kosmik yang epik.', 'Chris Hemsworth, Tessa Thompson, Chris Pratt, Jaimie Alexander, Christian Bale, Russell Crowe', 'https://www.youtube.com/embed/goIWmnE05XY', 'Disney+')">
+            <img src="thor_love_and_thunder_ver3.jpg" alt="Thor: Love and Thunder">
+            <h4>Thor: Love and Thunder (2022)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Black Panther: Wakanda Forever (2022)', '2022-11-11', 'Ryan Coogler', 'Wakanda berduka atas kehilangan Raja T&#39;Challa sambil menghadapi ancaman baru dari laut dalam. Cerita menjelajahi warisan, duka, dan kekuatan pemimpinan dalam menghadapi krisis global.', 'Letitia Wright, Lupita Nyong&#39;o, Danai Gurira, Winston Duke, Angela Bassett, Michaela Ja&#233; Rodriguez', 'https://www.youtube.com/embed/xn7fVwLMlEM', 'Disney+')">
+            <img src="black_panther_wakanda_forever_ver2.jpg" alt="Black Panther: Wakanda Forever">
+            <h4>Black Panther: Wakanda Forever (2022)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Guardians of the Galaxy: Holiday Special (2022)', '2022-11-25', 'James Gunn', 'Sebuah spesial liburan yang menampilkan anggota Guardians dalam petualangan yang penuh humor dan sentimen selama musim liburan. Tim berusaha menemukan hadiah yang sempurna sambil menghadapi berbagai hambatan lucu dan menyentuh.', 'Chris Pratt, Zoe Saldana, Dave Bautista, Karen Gillan, Pom Klementieff, Sean Gunn, Michael Rooker, Kevin Bacon', 'https://www.youtube.com/embed/RlCvPrjH2Uw', 'Disney+')">
+            <img src="guardians_of_the_galaxy_holiday_special.jpg" alt="Guardians of the Galaxy: Holiday Special">
+            <h4>Guardians of the Galaxy: Holiday Special (2022)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Ant-Man and the Wasp: Quantumania (2023)', '2023-02-17', 'Peyton Reed', 'Scott Lang dan Hope van Dyne memasuki Quantum Realm untuk menyelamatkan Cassie Lang. Mereka menghadapi Kang, seorang penakluk multiversal yang menjadi ancaman terbesar MCU.', 'Paul Rudd, Evangeline Lilly, Michael Douglas, Michelle Pfeiffer, Jonathan Majors', 'https://www.youtube.com/embed/lqwtTHBx3rI', 'Disney+')">
+            <img src="antman_and_the_wasp_quantumania_ver4.jpg" alt="Ant-Man: Quantumania">
+            <h4>Ant-Man and the Wasp: Quantumania (2023)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Guardians of the Galaxy Vol. 3 (2023)', '2023-05-05', 'James Gunn', 'Dalam film terakhir dari triologi Guardians, tim menghadapi ancaman baru sambil mencari makna keluarga dan pengorbanan. Peter Quill dan rekan-rekannya harus memutuskan nasib galaksi mereka.', 'Chris Pratt, Zoe Saldana, Dave Bautista, Karen Gillan, Pom Klementieff, Sean Gunn, Michael Rooker', 'https://www.youtube.com/embed/u3V8ZO1g-Ug', 'Disney+')">
+            <img src="guardians_of_the_galaxy_vol_three_ver3.jpg" alt="Guardians of the Galaxy Vol. 3">
+            <h4>Guardians of the Galaxy Vol. 3 (2023)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Marvels (2023)', '2023-11-10', 'Nia DaCosta', 'Carol Danvers, Kamala Khan, dan Monica Rambeau bersatu ketika mereka secara misterius menukar tubuh saat terlibat dalam pertempuran. Mereka harus bekerja sama untuk menyelamatkan dunia sambil menyelesaikan masalah pribadi mereka.', 'Brie Larson, Teyonah Parris, Iman Vellani, Samuel L. Jackson, Park Seo-joon', 'https://www.youtube.com/embed/LkUDhXKvfEY', 'Disney+')">
+            <img src="marvels_ver2.jpg" alt="The Marvels">
+            <h4>The Marvels (2023)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Deadpool &amp; Wolverine (2024)', '2024-07-26', 'Shawn Levy', 'Deadpool dan Wolverine bekerja sama dalam petualangan action-comedy yang penuh kekerasan dan humor. Film ini menandai debut Wolverine di MCU dan menciptakan dinamika unik antara dua karakter.', 'Ryan Reynolds, Hugh Jackman, Emma Corrin, Morena Baccarin, Rob Delaney, Leslie Uggams', 'https://www.youtube.com/embed/73_1biulkYo', 'Disney+')">
+            <img src="deadpool_and_wolverine_ver8.jpg" alt="Deadpool &amp; Wolverine">
+            <h4>Deadpool &amp; Wolverine (2024)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Captain America: Brave New World (2025)', '2025-02-14', 'Julius Onah', 'Sam Wilson mengambil mantel sebagai Captain America sambil navigasi dunia politik yang kompleks dan ancaman global. Dia harus membuktikan dirinya sebagai pahlawan sejati dengan kepemimpinan yang baru.', 'Anthony Mackie, Danny Ramirez, Giancalo Esposito, Xosha Roquemore, Carl Lumbly', 'https://www.youtube.com/embed/bBRd_naVjWs', 'Disney+')">
+            <img src="captain_america_brave_new_world_ver3.jpg" alt="Captain America: Brave New World">
+            <h4>Captain America: Brave New World (2025)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Thunderbolts (2025)', '2025-05-02', 'Jake Schreier', 'Tim Thunderbolts, terdiri dari karakter anti-hero dan mantan penjahat, disatukan untuk menjalankan misi berbahaya. Mereka harus belajar bekerja sama sambil menghadapi masa lalu mereka.', 'David Harbour, Florence Pugh, Wyatt Russell, Julia Louis-Dreyfus, Sebastian Stan', 'https://www.youtube.com/embed/0DCe5ycb_hQ', 'Disney+')">
+            <img src="thunderbolts.jpg" alt="Thunderbolts">
+            <h4>Thunderbolts (2025)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Fantastic Four: First Steps (2025)', '2025-07-25', 'Matt Shakman', 'Tim Fantastic Four menerima kekuatan super melalui paparan sinar kosmik dan harus belajar menggunakannya sambil melindungi dunia. Film ini menandai debut resmi keluarga superhero di MCU.', 'Pedro Pascal, Vanessa Kirby, Ebon Moss-Bachrach, Joseph Quinn', 'https://www.youtube.com/embed/rxT0LH11KvE', 'Disney+')">
+            <img src="fantastic_4_ poster.jpeg" alt="The Fantastic Four: First Steps">
+            <h4>The Fantastic Four: First Steps (2025)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- DC -->
+<div id="dc" class="franchise-section">
+    <h2 class="section-title">DC Extended Universe</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film DC...">
+    </div>
+    <div class="film-grid">
+            <div class="film-card" onclick="openModal('Superman (1978)', '1978-12-15', 'Richard Donner', 'Seorang yatim piatu alien dikirim dari planetnya yang sekarat ke Bumi, di mana ia menjadi reporter surat kabar dan melawan kejahatan dalam identitas rahasianya sebagai Superman.', 'Christopher Reeve, Margot Kidder, Marlon Brando, Gene Hackman, Ned Beatty', 'https://www.youtube.com/embed/pUwxH4SP3pI', 'Disney+')">
+            <img src="superman_ver1.jpg" alt="Superman (1978)">
+            <h4>Superman (1978)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Superman II (1980)', '1980-12-04', 'Richard Lester', 'Superman setuju untuk mengorbankan kekuatannya untuk memulai hubungan dengan Lois Lane, tetapi keputusannya segera membawa konsekuensi yang menghancurkan.', 'Christopher Reeve, Margot Kidder, Gene Hackman, Ned Beatty, Jackie Cooper', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="superman_ii_ver2.jpg" alt="Superman II (1980)">
+            <h4>Superman II (1980)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Superman III (1983)', '1983-06-17', 'Richard Lester', 'Kriptonit sintetis yang dicampur dengan tar membelah Superman menjadi dua: baik dan jahat. Superman jahat kemudian mengancam untuk melelehkan tudung es kutub.', 'Christopher Reeve, Richard Pryor, Margot Kidder, Jackie Cooper, Marc McClure', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="superman_iii.jpg" alt="Superman III (1983)">
+            <h4>Superman III (1983)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Batman (1989)', '1989-06-23', 'Tim Burton', 'Ksatria Gelap Kota Gotham memulai perangnya melawan kejahatan dengan musuh utama pertamanya adalah Joker yang homicidal dan konyol.', 'Michael Keaton, Jack Nicholson, Kim Basinger, Michael Gough, Jerry Hall', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="batman.jpg" alt="Batman (1989)">
+            <h4>Batman (1989)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Batman Returns (1992)', '1992-06-19', 'Tim Burton', 'Batman menghadapi dua ancaman kriminal monster: Penguin yang cacat bentuknya aneh dan Catwoman yang licin dan misterius.', 'Michael Keaton, Danny DeVito, Michelle Pfeiffer, Christopher Walken, Michael Gough', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="batman_returns_ver3.jpg" alt="Batman Returns (1992)">
+            <h4>Batman Returns (1992)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Batman Forever (1995)', '1995-06-16', 'Joel Schumacher', 'Ksatria Gelap Kota Gotham menghadapi penjahat misterius yang dikenal sebagai Riddler, yang telah melumpuhkan kota dengan skema pemerasan skala luas, dan duet mematikan kesenangan dan rasa sakit.', 'Val Kilmer, Tommy Lee Jones, Jim Carrey, Nicole Kidman, Chris O&#39;Donnell', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="batman_forever_ver7.jpg" alt="Batman Forever (1995)">
+            <h4>Batman Forever (1995)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Batman & Robin (1997)', '1997-06-20', 'Joel Schumacher', 'Batman dan Robin berusaha menjaga hubungan mereka tetap utuh bahkan saat mereka harus menghentikan Mr. Freeze dan Poison Ivy dari membekukan Kota Gotham.', 'George Clooney, Chris O&#39;Donnell, Arnold Schwarzenegger, Uma Thurman, Alicia Silverstone', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="batman_and_robin_ver3.jpg" alt="Batman & Robin (1997)">
+            <h4>Batman & Robin (1997)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Superman IV: The Quest for Peace (1987)', '1987-07-24', 'Sidney J. Furie', 'Dengan dunia dalam kekacauan karena absennya Superman, Lex Luthor menciptakan makhluk baru untuk mengalahkan Man of Steel: Nuclear Man. Dua musuh superberkuasa bertarung dalam pertempuran epik.', 'Christopher Reeve, Gene Hackman, Jackie Cooper, Marc McClure, Jon Cryer', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="superman_iv.jpg" alt="Superman IV (1987)">
+            <h4>Superman IV: The Quest for Peace (1987)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('V for Vendetta (2005)', '2005-12-11', 'James McTeigue', 'Di tirani Inggris masa depan, pejuang kebebasan bayangan yang dikenal hanya dengan alias &#34;V&#34;, merencanakan untuk menggulingkannya dengan bantuan seorang wanita muda.', 'Hugo Weaving, Natalie Portman, Rupert Graves, Stephen Rea, John Hurt', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="v_for_vendetta_ver4.jpg" alt="V for Vendetta">
+            <h4>V for Vendetta (2005)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Constantine (2005)', '2005-02-08', 'Francis Lawrence', 'Detektif supernatural John Constantine membantu seorang polisi wanita membuktikan kematian saudarinya bukan bunuh diri, tetapi sesuatu yang lebih.', 'Keanu Reeves, Rachel Weisz, Shia LaBeouf, Tilda Swinton, Pruitt Taylor Vince', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="constantine_ver3.jpg" alt="Constantine (2005)">
+            <h4>Constantine (2005)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Batman Begins (2005)', '2005-06-15', 'Christopher Nolan', 'Bruce Wayne, setelah menyaksikan pembunuhan orang tuanya, berangkat ke perjalanan untuk menemukan keadilan. Dia bergabung dengan Ra&#39;s al Ghul untuk melatih dirinya menjadi Batman, pahlawan yang melindungi Gotham City dari kejahatan.', 'Christian Bale, Michael Caine, Liam Neeson, Katie Holmes, Gary Oldman', 'https://www.youtube.com/embed/YhAul3QKd1M', 'Disney+')">
+            <img src="batman_begins_ver3.jpg" alt="Batman Begins (2005)">
+            <h4>Batman Begins (2005)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Dark Knight (2008)', '2008-07-18', 'Christopher Nolan', 'Batman berhadapan dengan Joker, seorang penjahat gila yang ingin menghancurkan Gotham City. Bruce Wayne harus memilih antara kehidupan pribadinya dan tugasnya sebagai pahlawan.', 'Christian Bale, Heath Ledger, Aaron Eckhart, Michael Caine, Maggie Gyllenhaal', 'https://www.youtube.com/embed/EXeTwQWrcwY', 'Disney+')">
+            <img src="The_Dark_Knight_(2008_film).jpg" alt="The Dark Knight (2008)">
+            <h4>The Dark Knight (2008)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Watchmen (2009)', '2009-03-06', 'Zack Snyder', 'Di tahun 1985 alternatif di mana superhero dilarang, sekelompok vigilante pensiunan menyelidiki pembunuhan salah satu dari mereka, mengungkap konspirasi yang mengancam dunia.', 'Malin Akerman, Billy Crudup, Matthew Goode, Jackie Earle Haley, Jeffrey Dean Morgan, Patrick Wilson, Carla Gugino', 'https://www.youtube.com/embed/Tt8t4wDIpXA', 'Disney+')">
+            <img src="Watchmen_2009.jpg" alt="Watchmen (2009)">
+            <h4>Watchmen (2009)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Green Lantern (2011)', '2011-06-17', 'Martin Campbell', 'Seorang pilot uji diberikan cincin hijau mistis yang memberinya kekuatan dunia lain, serta keanggotaan dalam skuadron antargalaksi yang bertugas menjaga perdamaian di alam semesta.', 'Ryan Reynolds, Blake Lively, Peter Sarsgaard, Mark Strong, Angela Bassett, Tim Robbins, Temuera Morrison', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="green_lantern_ver6.jpg" alt="Green Lantern (2011)">
+            <h4>Green Lantern (2011)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Dark Knight Rises (2012)', '2012-07-20', 'Christopher Nolan', 'Delapan tahun setelah peristiwa The Dark Knight, Batman kembali untuk menghadapi Bane, seorang teroris yang ingin menghancurkan Gotham. Bruce Wayne harus bangkit dari masa pensiunnya.', 'Christian Bale, Tom Hardy, Anne Hathaway, Michael Caine, Gary Oldman', 'https://www.youtube.com/embed/g8evyE9TuYk', 'Disney+')">
+            <img src="The_Dark_Knight_(2008_film).jpg" alt="The Dark Knight Rises (2012)">
+            <h4>The Dark Knight Rises (2012)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Man of Steel (2013)', '2013-06-14', 'Zack Snyder', 'Clark Kent belajar tentang asal-usulnya sebagai alien dari planet Krypton dan menjadi Superman untuk melindungi Bumi dari ancaman.', 'Henry Cavill, Amy Adams, Michael Shannon, Diane Lane, Russell Crowe', 'https://www.youtube.com/embed/T6DJcgm3wNY', 'Disney+')">
+            <img src="Man_of_Steel_2013.jpg" alt="Man of Steel (2013)">
+            <h4>Man of Steel (2013)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Suicide Squad (2016)', '2016-08-05', 'David Ayer', 'Badan pemerintah rahasia merekrut supervillain yang dipenjara untuk menjalankan misi ops hitam berbahaya sebagai imbalan pengampunan, tetapi tugas pertama mereka gagal secara dramatis.', 'Will Smith, Jared Leto, Margot Robbie, Joel Kinnaman, Viola Davis, Jai Courtney, Jay Hernandez, Adewale Akinnuoye-Agbaje, Ike Barinholtz, Scott Eastwood, Cara Delevingne', 'https://www.youtube.com/embed/CmRih_VtVAs', 'Disney+')">
+            <img src="Suicide_Squad_2016.jpg" alt="Suicide Squad (2016)">
+            <h4>Suicide Squad (2016)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Batman v Superman: Dawn of Justice (2016)', '2016-03-25', 'Zack Snyder', 'Batman dan Superman bertemu dalam pertarungan epik ketika Superman dianggap sebagai ancaman oleh Batman. Mereka harus bersatu melawan ancaman yang lebih besar.', 'Ben Affleck, Henry Cavill, Amy Adams, Jesse Eisenberg, Diane Lane', 'https://www.youtube.com/embed/0WWzgGyAH6Y', 'Disney+')">
+            <img src="batman_v_superman_dawn_of_justice_ver8.jpg" alt="Batman v Superman (2016)">
+            <h4>Batman v Superman: Dawn of Justice (2016)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Wonder Woman (2017)', '2017-06-02', 'Patty Jenkins', 'Diana Prince, putri Amazon, meninggalkan pulau rumahnya untuk bergabung dalam Perang Dunia I dan menjadi Wonder Woman.', 'Gal Gadot, Chris Pine, Robin Wright, Danny Huston, David Thewlis', 'https://www.youtube.com/embed/1Q8fG0TtVAY', 'Disney+')">
+            <img src="Wonder_Woman_2017.jpg" alt="Wonder Woman (2017)">
+            <h4>Wonder Woman (2017)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Justice League (2017)', '2017-11-17', 'Zack Snyder', 'Batman dan Wonder Woman merekrut tim pahlawan untuk menghentikan Steppenwolf dari menginvasi Bumi.', 'Ben Affleck, Gal Gadot, Jason Momoa, Ezra Miller, Ray Fisher', 'https://www.youtube.com/embed/r9-DM9uBtVI', 'Disney+')">
+            <img src="Justice_League_2017.jpg" alt="Justice League (2017)">
+            <h4>Justice League (2017)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Aquaman (2018)', '2018-12-21', 'James Wan', 'Arthur Curry belajar tentang warisannya sebagai raja Atlantis dan harus memilih antara dunia darat dan laut.', 'Jason Momoa, Amber Heard, Willem Dafoe, Patrick Wilson, Nicole Kidman', 'https://www.youtube.com/embed/WDkg3h8PCVU', 'Disney+')">
+            <img src="aquaman.jpg" alt="Aquaman (2018)">
+            <h4>Aquaman (2018)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Aquaman and the Lost Kingdom (2023)', '2023-12-22', 'James Wan', 'Arthur Curry, yang dikenal sebagai Aquaman, harus menghadapi ancaman baru dari kerajaan Atlantis yang hilang. Bersama dengan Mera dan sekutunya, dia berjuang untuk melindungi dunia dari kekuatan jahat yang ingin menghancurkan segalanya.', 'Jason Momoa, Amber Heard, Willem Dafoe, Patrick Wilson, Dolph Lundgren, Yahya Abdul-Mateen II, Nicole Kidman', 'https://www.youtube.com/embed/FlsCjmMhFmw', 'Disney+')">
+            <img src="aquaman_and_the_lost_kingdom_ver3.jpg" alt="Aquaman and the Lost Kingdom (2023)">
+            <h4>Aquaman and the Lost Kingdom (2023)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Shazam! (2019)', '2019-04-05', 'David F. Sandberg', 'Seorang anak laki-laki yang baru-baru ini diasuh di Kansas tahun 1990-an diberi kesempatan untuk menjadi superhero dewasa, ketika dia dipilih oleh penyihir kuno. Sekarang dia harus menggunakan kekuatan barunya untuk membantu melawan kejahatan yang ingin menguasai dunia.', 'Zachary Levi, Mark Strong, Asher Angel, Jack Dylan Grazer, Djimon Hounsou, Faithe Herman, Grace Fulton', 'https://www.youtube.com/embed/go6GEIrcvFY', 'Disney+')">
+            <img src="shazam_ver3.jpg" alt="Shazam! (2019)">
+            <h4>Shazam! (2019)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Joker (2019)', '2019-10-04', 'Todd Phillips', 'Pada tahun 1981, seorang komedian yang kesulitan bernama Arthur Fleck mencari sorotan di Kota Gotham, di mana ia menghadapi serangkaian konflik yang meningkat yang membuatnya menerima sisi gelapnya.', 'Joaquin Phoenix, Robert De Niro, Zazie Beetz, Frances Conroy, Brett Cullen, Glenn Fleshler, Leigh Gill, Josh Pais, Rocco Luna, Marc Maron, Sondra James, Murphy Guyer, Douglas Hodge, Dante Pereira-Olson', 'https://www.youtube.com/embed/zAGVQLHvwOY', 'Disney+')">
+            <img src="joker_ver2.jpg" alt="Joker (2019)">
+            <h4>Joker (2019)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Wonder Woman 1984 (2020)', '2020-12-25', 'Patty Jenkins', 'Diana Prince hidup tenang di antara manusia fana pada tahun 1980-an, tetapi ketika artefak kuno muncul kembali, dia harus menerima semangat pejuangnya untuk melawan dewa yang ingin membentuk ulang dunia sesuai gambarannya.', 'Gal Gadot, Chris Pine, Kristen Wiig, Pedro Pascal, Robin Wright, Connie Nielsen', 'https://www.youtube.com/embed/sfM7_JLk-84', 'Disney+')">
+            <img src="wonder_woman_nineteen_eighty_four.jpg" alt="Wonder Woman 1984 (2020)">
+            <h4>Wonder Woman 1984 (2020)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Birds of Prey (and the Fantabulous Emancipation of One Harley Quinn) (2020)', '2020-02-07', 'Cathy Yan', 'Setelah berpisah dengan Joker, Harley Quinn bergabung dengan superhero Black Canary, Huntress dan Renee Montoya untuk menyelamatkan seorang gadis muda dari lord kejahatan jahat.', 'Margot Robbie, Rosie Perez, Mary Elizabeth Winstead, Jurnee Smollett, Ewan McGregor, Chris Messina, Ella Jay Basco, Ali Wong, Charlene Amoia', 'https://www.youtube.com/embed/kGM4uYZzfu0', 'Disney+')">
+            <img src="Birds_of_Prey_2020.jpg" alt="Birds of Prey (2020)">
+            <h4>Birds of Prey (2020)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Suicide Squad (2021)', '2021-08-06', 'James Gunn', 'Supervillain Harley Quinn, Bloodsport, Peacemaker dan koleksi cons gila di penjara Belle Reve bergabung dengan Task Force X super-rahasia super-curang saat mereka dijatuhkan di pulau Corto Maltese yang jauh dan penuh musuh.', 'Margot Robbie, Idris Elba, John Cena, Joel Kinnaman, Sylvester Stallone, Viola Davis, Jai Courtney, Pete Davidson, Michael Rooker, Daniela Melchior, Flula Borg, Juan Diego Botto, Storm Reid, Nathan Fillion, Taika Waititi', 'https://www.youtube.com/embed/eg5ciq--_cI', 'Disney+')">
+            <img src="The_Suicide_Squad_2021.jpg" alt="The Suicide Squad (2021)">
+            <h4>The Suicide Squad (2021)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Zack Snyder&#39;s Justice League (2021)', '2021-03-18', 'Zack Snyder', 'Bertekad untuk memastikan pengorbanan utama Superman tidak sia-sia, Bruce Wayne menyatukan kekuatan dengan Diana Prince dengan rencana untuk merekrut tim metahuman untuk melindungi dunia dari ancaman proporsi katastrofik yang mendekat.', 'Ben Affleck, Henry Cavill, Amy Adams, Gal Gadot, Ray Fisher, Jason Momoa, Ezra Miller, Willem Dafoe, Jesse Eisenberg, Jeremy Irons, Diane Lane, Connie Nielsen, J.K. Simmons', 'https://www.youtube.com/embed/vM-Bja2Gy04', 'Disney+')">
+            <img src="Zack_Snyders_Justice_League_2021.jpg" alt="Zack Snyder's Justice League (2021)">
+            <h4>Zack Snyder's Justice League (2021)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Black Adam (2022)', '2022-10-21', 'Jaume Collet-Serra', 'Hampir 5.000 tahun setelah diberikan kekuatan mahakuasa dewa-dewa Mesir—dan dipenjara segera setelahnya—Black Adam dibebaskan dari makam duniawinya, siap melepaskan bentuk keadilannya yang unik di dunia modern.', 'Dwayne Johnson, Aldis Hodge, Pierce Brosnan, Noah Centineo, Sarah Shahi, Marwan Kenzari, Quintessa Swindell, Bodhi Sabongui', 'https://www.youtube.com/embed/X0tOpBuYasI', 'Disney+')">
+            <img src="Black_Adam_2022.jpg" alt="Black Adam (2022)">
+            <h4>Black Adam (2022)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Batman (2022)', '2022-03-04', 'Matt Reeves', 'Bruce Wayne, dalam tahun keduanya sebagai Batman, menyelidiki pembunuhan yang mengarah ke korupsi di Gotham City.', 'Robert Pattinson, Zoë Kravitz, Jeffrey Wright, Colin Farrell, Paul Dano', 'https://www.youtube.com/embed/mqqft2x_Aa4', 'Disney+')">
+            <img src="batman_ver3 2022.jpg" alt="The Batman (2022)">
+            <h4>The Batman (2022)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Blue Beetle (2023)', '2023-08-18', 'Ángel Manuel Soto', 'Lulusan perguruan tinggi baru-baru ini Jaime Reyes kembali ke rumah penuh aspirasi untuk masa depannya, hanya untuk menemukan bahwa rumah tidak seperti yang ditinggalkannya. Saat dia mencari tujuan di dunia, takdir campur tangan ketika Jaime secara tak terduga menemukan dirinya memiliki relik kuno bioteknologi alien: Scarab.', 'Xolo Maridueña, Adriana Barraza, Damián Alcázar, Raoul Max Trujillo, Susan Sarandon, George Lopez, Elpidia Carrillo', 'https://www.youtube.com/embed/FBN7-7KYFQQ', 'Disney+')">
+            <img src="blue_beetle_ver4.jpg" alt="Blue Beetle (2023)">
+            <h4>Blue Beetle (2023)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Shazam! Fury of the Gods (2023)', '2023-03-17', 'David F. Sandberg', 'Billy Batson dan saudara angkatnya, yang berubah menjadi superhero dengan mengatakan &#34;Shazam!&#34;, dipaksa untuk kembali beraksi dan melawan Putri-Putri Atlas, yang harus mereka hentikan dari menggunakan senjata yang bisa menghancurkan dunia.', 'Zachary Levi, Asher Angel, Jack Dylan Grazer, Rachel Zegler, Helen Mirren, Lucy Liu, Djimon Hounsou', 'https://www.youtube.com/embed/ZbaEDndn4P4', 'Disney+')">
+            <img src="shazam_fury_of_the_gods_ver3.jpg" alt="Shazam! Fury of the Gods (2023)">
+            <h4>Shazam! Fury of the Gods (2023)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Aquaman: The Lost Kingdom (2023)', '2023-12-22', 'James Wan', 'Arthur Curry, yang dikenal sebagai Aquaman, harus menghadapi ancaman baru dari kerajaan Atlantis yang hilang. Bersama dengan Mera dan sekutunya, dia berjuang untuk melindungi dunia dari kekuatan jahat yang ingin menghancurkan segalanya.', 'Jason Momoa, Amber Heard, Willem Dafoe, Patrick Wilson, Dolph Lundgren, Yahya Abdul-Mateen II, Nicole Kidman', 'https://www.youtube.com/embed/FlsCjmMhFmw', 'Disney+')">
+            <img src="aquaman_and_the_lost_kingdom_ver3.jpg" alt="Aquaman: The Lost Kingdom (2023)">
+            <h4>Aquaman: The Lost Kingdom (2023)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Joker: Folie à Deux (2024)', '2024-10-04', 'Todd Phillips', 'Arthur Fleck, alias Joker, dibebaskan dari Arkham Asylum dan bertemu dengan seorang wanita bernama Lee Quinzel, yang mungkin atau mungkin bukan Harley Quinn yang terkenal. Saat mereka memulai hubungan yang penuh obsesi dan terdistorsi, kegilaan Arthur semakin dalam saat dia terus turun ke dalam kegilaan yang kacau.', 'Joaquin Phoenix, Lady Gaga, Brendan Gleeson, Catherine Keener, Zazie Beetz, Steve Coogan', 'https://www.youtube.com/embed/_OKAwz2MsJs', 'Disney+')">
+            <img src="joker_folie_a_deux_ver2.jpg" alt="Joker: Folie à Deux (2024)">
+            <h4>Joker: Folie à Deux (2024)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Superman (2025)', '2025-07-11', 'James Gunn', 'Superman kembali ke layar lebar dengan kemenangan dalam sekuel penuh aksi ini untuk Man of Steel dan Batman v Superman: Dawn of Justice. Sebagai Clark Kent / Kal-El, dia harus melindungi Metropolis dari skema terbaru Lex Luthor sambil bergulat dengan identitas gandanya.', 'David Corenswet, Rachel Brosnahan, Nicholas Hoult, Nathan Fillion, Edi Gathegi, Anthony Carrigan, Sara Sampaio', 'https://www.youtube.com/embed/uhUht6vAsMY', 'Disney+')">
+            <img src="superman 2025.jpg" alt="Superman (2025)">
+            <h4>Superman (2025)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- STAR WARS -->
+<div id="starwars" class="franchise-section">
+    <h2 class="section-title">Star Wars Saga</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Star Wars...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick="openModal('Star Wars: A New Hope (1977)', '1977-05-25', 'George Lucas', 'Luke Skywalker, seorang petani muda dari planet Tatooine, menemukan droid R2-D2 yang membawanya pesan dari Putri Leia. Dia bergabung dengan Obi-Wan Kenobi untuk menyelamatkan galaksi dari kekuatan gelap Kekaisaran Galaksi.', 'Mark Hamill, Harrison Ford, Carrie Fisher, Alec Guinness, Billy Dee Williams', 'https://www.youtube.com/embed/vZ734NWnM5g', 'Disney+')">
+            <img src="Star Wars (1977).jpg" alt="Star Wars IV">
+            <h4>Star Wars: A New Hope (1977)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Empire Strikes Back (1980)', '1980-05-17', 'Irvin Kershner', 'Setelah pertarungan besar, Aliansi Pemberontak tersebar. Luke melatih kekuatan Force-nya sementara Han dan Leia melarikan diri dari pasukan Kekaisaran. Darth Vader terus mengejar mereka dalam petualangan yang mencengangkan.', 'Mark Hamill, Harrison Ford, Carrie Fisher, Alec Guinness, Billy Dee Williams, Frank Oz', 'https://www.youtube.com/embed/JNwNXF9Y6kY', 'Disney+')">
+            <img src="empire_strikes_back_ver2.jpg" alt="The Empire Strikes Back">
+            <h4>The Empire Strikes Back (1980)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Return of the Jedi (1983)', '1983-05-25', 'Richard Marquardt', 'Aliansi Pemberontak meluncurkan serangan final melawan Kekaisaran. Luke Skywalker menghadapi takdir barunya dan mengungkap kebenaran tentang keluarganya dalam pertarungan epik untuk menyelamatkan galaksi.', 'Mark Hamill, Harrison Ford, Carrie Fisher, Billy Dee Williams, Ian McDiarmid, Frank Oz', 'https://www.youtube.com/embed/oG0t-t-rN2Q', 'Disney+')">
+            <img src="return_of_the_jedi_ver2.jpg" alt="Return of the Jedi">
+            <h4>Return of the Jedi (1983)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Phantom Menace (1999)', '1999-05-19', 'George Lucas', 'Dua Jedi, Qui-Gon Jinn dan Obi-Wan Kenobi, berusaha melindungi Putri Padmé dari serangan perdagangan Federasi. Mereka menemukan Anakin Skywalker, seorang anak yang misterius dengan potensi Force yang luar biasa.', 'Liam Neeson, Ewan McGregor, Natalie Portman, Jake Lloyd, Ian McDiarmid, Samuel L. Jackson', 'https://www.youtube.com/embed/bD7bpG-zDJQ', 'Disney+')">
+            <img src="star_wars_episode_one_the_phantom_menace_ver2.jpg" alt="The Phantom Menace">
+            <h4>The Phantom Menace (1999)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Attack of the Clones (2002)', '2002-05-16', 'George Lucas', 'Sepuluh tahun kemudian, Putri Padmé menghadapi ancaman pembunuh. Anakin Skywalker menjadi Padawan Obi-Wan Kenobi dan mengembangkan hubungan dengan Padmé sambil mengungkap konspirasi Sith yang mengerikan.', 'Ewan McGregor, Natalie Portman, Hayden Christensen, Christopher Lee, Samuel L. Jackson, Frank Oz', 'https://www.youtube.com/embed/gYcSvr_505E', 'Disney+')">
+            <img src="star_wars_episode_two_attack_of_the_clones_ver2.jpg" alt="Attack of the Clones">
+            <h4>Attack of the Clones (2002)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Revenge of the Sith (2005)', '2005-05-19', 'George Lucas', 'Perang Clone mencapai puncaknya saat Anakin Skywalker tergoda oleh kekuatan gelap. Jatuhnya Jedi Order terjadi dalam tragedi yang mengubah galaksi selamanya dengan Anakin menjadi Darth Vader.', 'Ewan McGregor, Hayden Christensen, Natalie Portman, Ian McDiarmid, Samuel L. Jackson, Frank Oz, Jimmy Smits', 'https://www.youtube.com/embed/tnKf-HV3aYw', 'Disney+')">
+            <img src="star_wars_episode_three_ver2.jpg" alt="Revenge of the Sith">
+            <h4>Revenge of the Sith (2005)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Force Awakens (2015)', '2015-12-18', 'J.J. Abrams', 'Puluhan tahun setelah kemenangan Aliansi Pemberontak, Rejim Pertama mengancam ketenangan baru. Rey, seorang pembajak pui, dan Finn, tentara deserter, terlibat dalam petualangan yang mengingatkan kembali Skywalker.', 'Daisy Ridley, John Boyega, Adam Driver, Harrison Ford, Carrie Fisher, Mark Hamill', 'https://www.youtube.com/embed/IssCqYaXvLg', 'Disney+')">
+            <img src="star_wars_episode_vii__the_force_awakens_ver3.jpg" alt="The Force Awakens">
+            <h4>The Force Awakens (2015)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Rogue One: A Star Wars Story (2016)', '2016-12-16', 'Gareth Edwards', 'Cerita awal sebelum A New Hope, sekelompok pemberontak melakukan misi bertuah untuk mencuri rencana Death Star. Jyn Erso dan pasukan rahasia berjuang melawan Kekaisaran dalam petualangan yang menegangkan.', 'Felicity Jones, Diego Luna, Ben Mendelsohn, Donnie Yen, Mads Mikkelsen, Alan Tudyk', 'https://www.youtube.com/embed/fwlt5A1w_9A', 'Disney+')">
+            <img src="rogue_one_a_star_wars_story_ver2.jpg" alt="Rogue One">
+            <h4>Rogue One (2016)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Last Jedi (2017)', '2017-12-15', 'Rian Johnson', 'Rey mencari Luke Skywalker untuk mendapatkan bimbingan Force sementara Perlawanan berhadapan dengan Rejim Pertama. Pertanyaan tentang warisan dan takdir diungkap dalam film yang berani dan kontroversial.', 'Daisy Ridley, Mark Hamill, Adam Driver, John Boyega, Carrie Fisher, Oscar Isaac, Lupita Nyong&#39;o', 'https://www.youtube.com/embed/Q0CbN8sfihc', 'Disney+')">
+            <img src="star_wars_the_last_jedi_ver2.jpg" alt="The Last Jedi">
+            <h4>The Last Jedi (2017)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Solo: A Star Wars Story (2018)', '2018-05-25', 'Ron Howard', 'Asal-usul Han Solo diungkap dalam petualangan aksi-petualangan yang penuh. Muda, ambisius, dan pembuat masalah, Han berhadapan dengan anak buah Jabba the Hutt dalam pekerjaan yang mengubah hidupnya.', 'Alden Ehrenreich, Woody Harrelson, Emilia Clarke, Donald Glover, Thandie Newton, Paul Bettany', 'https://www.youtube.com/embed/qgdwvlzPiBA', 'Disney+')">
+            <img src="solo_a_star_wars_story.jpg" alt="Solo">
+            <h4>Solo: A Star Wars Story (2018)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Rise of Skywalker (2019)', '2019-12-20', 'J.J. Abrams', 'Kesimpulan Saga Skywalker mengungkap kebenaran besar tentang asal Rey. Perlawanan meluncurkan serangan akhir melawan pasukan Palatine sambil Rey menghadapi takdir kosmiknya dalam pertarungan epik untuk galaksi.', 'Daisy Ridley, Adam Driver, John Boyega, Oscar Isaac, Carrie Fisher, Mark Hamill, Ian McDiarmid, Billy Dee Williams', 'https://www.youtube.com/embed/IM0DaFn3j6w', 'Disney+')">
+            <img src="star_wars_the_rise_of_skywalker_ver4.jpg" alt="The Rise of Skywalker">
+            <h4>The Rise of Skywalker (2019)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Mandalorian and Grogu (2026)', '2026-05-08', 'Dave Filoni', 'Din Djarin dan Grogu melanjutkan petualangan mereka di galaksi yang jauh. Mereka menghadapi ancaman baru sambil mencari tempat tinggal yang aman, dengan dinamika hubungan mentor-pelajar yang terus berkembang dalam cerita yang penuh aksi dan emosi.', 'Pedro Pascal, Rosario Dawson, Carl Weathers', 'https://www.youtube.com/embed/qKI6wEwJCYU', 'TBA')">
+            <img src="mandalorian.jpg" alt="The Mandalorian and Grogu">
+            <h4>The Mandalorian and Grogu (2026)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- ALIEN -->
+<div id="alien" class="franchise-section">
+    <h2 class="section-title">Alien Franchise</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Alien...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick="openModal('Alien (1979)', '1979-05-25', 'Ridley Scott', 'Kru kapal ruang angkasa komersial bertemu dengan bentuk kehidupan mematikan setelah menyelidiki transmisi yang tidak diketahui.', 'Sigourney Weaver, Tom Skerritt, Veronica Cartwright, Harry Dean Stanton, John Hurt, Ian Holm, Yaphet Kotto', 'https://www.youtube.com/embed/LjLamj-b0I8', 'Disney+')">
+            <img src="alien poster.webp" alt="Alien">
+            <h4>Alien (1979)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Aliens (1986)', '1986-07-18', 'James Cameron', 'Ripley kembali ke planet LV-426 untuk menghadapi alien sekali lagi, kali ini dengan tim marinir kolonial.', 'Sigourney Weaver, Carrie Henn, Michael Biehn, Lance Henriksen, Paul Reiser, Bill Paxton', 'https://www.youtube.com/embed/oSeQQ-lBKxw', 'Disney+')">
+            <img src="aliens_ver1.jpg" alt="Aliens">
+            <h4>Aliens (1986)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Alien 3 (1992)', '1992-05-22', 'David Fincher', 'Ripley adalah satu-satunya penyintas ketika sekoci hidupnya jatuh di planet penjara yang dihuni oleh narapidana kekerasan dan alien mematikan.', 'Sigourney Weaver, Charles S. Dutton, Charles Dance, Paul McGann, Brian Glover', 'https://www.youtube.com/embed/8Q1UzU3bX-w', 'Disney+')">
+            <img src="alien_three_ver1.jpg" alt="Alien 3">
+            <h4>Alien 3 (1992)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Alien Resurrection (1997)', '1997-11-26', 'Jean-Pierre Jeunet', 'Dua abad setelah kematiannya, Ellen Ripley dikloning dan harus menghadapi alien sekali lagi.', 'Sigourney Weaver, Winona Ryder, Dominique Pinon, Ron Perlman, Gary Dourdan, Michael Wincott, Kim Flowers, Dan Hedaya', 'https://www.youtube.com/embed/7GqCLvU2UsAQ', 'Disney+')">
+            <img src="alien_resurrection_ver3.jpg" alt="Alien Resurrection">
+            <h4>Alien Resurrection (1997)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('AVP: Alien vs. Predator (2004)', '2004-08-13', 'Paul W.S. Anderson', 'Tim arkeolog dan petualang menggali piramida yang terkubur di Antartika, tetapi mereka segera menemukan diri mereka terjebak dalam pertempuran mematikan antara dua spesies paling mematikan di alam semesta.', 'Sanaa Lathan, Raoul Bova, Lance Henriksen, Ewen Bremner, Colin Salmon, Tommy Flanagan, Joseph Rye', 'https://www.youtube.com/embed/0qHvmO2B5ZI', 'Disney+')">
+            <img src="alien_vs_predator_ver3.jpg" alt="AVP: Alien vs. Predator">
+            <h4>AVP: Alien vs. Predator (2004)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Aliens vs. Predator: Requiem (2007)', '2007-12-25', 'Colin Strause, Greg Strause', 'A small town in Gunnison County, Colorado, becomes the site of a horrific battle between the Predators and the Aliens.', 'Steven Pasquale, Reiko Aylesworth, John Ortiz, Johnny Lewis, Ariel Gade, Kristen Hager, Sam Trammell', 'https://www.youtube.com/embed/5X8uU3E5lVQ', 'Disney+')">
+            <img src="aliens_vs_predator_requiem.jpg" alt="Aliens vs. Predator: Requiem">
+            <h4>Aliens vs. Predator: Requiem (2007)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Prometheus (2012)', '2012-06-08', 'Ridley Scott', 'Tim penjelajah menemukan petunjuk tentang asal-usul umat manusia di Bumi, membawa mereka dalam perjalanan ke sudut paling gelap alam semesta.', 'Noomi Rapace, Michael Fassbender, Guy Pearce, Idris Elba, Logan Marshall-Green, Charlize Theron', 'https://www.youtube.com/embed/34cEo0VhfGE', 'Disney+')">
+            <img src="prometheus.jpg" alt="Prometheus">
+            <h4>Prometheus (2012)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Alien: Covenant (2017)', '2017-05-19', 'Ridley Scott', 'Kru kapal koloni, yang terikat ke planet terpencil, menemukan apa yang mereka pikir adalah surga yang belum dipetakan, tetapi sebenarnya adalah dunia gelap dan berbahaya.', 'Michael Fassbender, Katherine Waterston, Billy Crudup, Danny McBride, Demián Bichir, Carmen Ejogo, Amy Seimetz, Jussie Smollett, Callie Hernandez, James Franco', 'https://www.youtube.com/embed/svnAD0TApb8', 'Disney+')">
+            <img src="alien_covenant_ver4.jpg" alt="Alien: Covenant">
+            <h4>Alien: Covenant (2017)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Alien: Romulus (2024)', '2024-08-16', 'Fede Álvarez', 'Saat mengais-ngais ujung dalam stasiun ruang angkasa yang ditinggalkan, sekelompok kolonis ruang muda berhadapan muka dengan bentuk kehidupan paling menakutkan di alam semesta.', 'Cailee Spaeny, David Jonsson, Archie Renaux, Isabela Merced, Spike Fearn, Aileen Wu', 'https://www.youtube.com/embed/GmBK0JL4xKw', 'Disney+')">
+            <img src="alien_romulus_ver2.jpg" alt="Alien: Romulus">
+            <h4>Alien: Romulus (2024)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- TEXAS CHAINSAW MASSACRE -->
+<div id="texas" class="franchise-section">
+    <h2 class="section-title">Texas Chainsaw Massacre</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Texas Chainsaw...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick="openModal('The Texas Chainsaw Massacre (1974)', '1974-10-11', 'Tobe Hooper', 'Sebuah kelompok remaja terjebak di rumah terpencil di Texas, di mana mereka menghadapi keluarga kanibal yang dipimpin oleh Leatherface, seorang pria dengan topeng kulit manusia yang menggunakan gergaji mesin untuk membunuh.', 'Marilyn Burns, Allen Danziger, Paul A. Partain, William Vail, Teri McMinn', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="TheTexasChainSawMassacre-poster.jpg" alt="The Texas Chainsaw Massacre">
+            <h4>The Texas Chainsaw Massacre (1974)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Texas Chainsaw Massacre 2 (1986)', '1986-08-22', 'Tobe Hooper', 'Dua tahun setelah peristiwa pertama, seorang wanita muda bernama Stretch menjadi sasaran keluarga Sawyer yang kanibal. Dia harus menghadapi Leatherface dan keluarganya dalam pertempuran untuk bertahan hidup.', 'Caroline Williams, Dennis Hopper, Bill Moseley, Bill Johnson, Chris Douridas', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="texas_chainsaw_massacre_two.jpg" alt="The Texas Chainsaw Massacre 2">
+            <h4>The Texas Chainsaw Massacre 2 (1986)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Leatherface: The Texas Chainsaw Massacre III (1990)', '1990-01-12', 'Jeff Burr', 'Seorang pria muda bernama Benny menemukan rahasia keluarga Sawyer dan Leatherface. Dia dan teman-temannya terjebak dalam rumah terpencil, menghadapi ancaman dari keluarga kanibal yang menggunakan gergaji mesin.', 'Kate Hodge, William Butler, Ken Foree, Tom Everett, Viggo Mortensen', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="leatherface_texas_chainsaw_massacre_iii.jpg" alt="Leatherface">
+            <h4>Leatherface (1990)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Texas Chainsaw Massacre: The Next Generation (1994)', '1994-08-29', 'Kim Henkel', 'Sebuah kelompok remaja terjebak di rumah terpencil di Texas, di mana mereka menemukan rahasia keluarga Sawyer dan Leatherface. Mereka harus bertarung untuk keluar hidup-hidup dari rumah horor itu.', 'Renée Zellweger, Matthew McConaughey, Robert Jacks, Lisa Marie Newmyer, Joe Stevens', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="texas_chainsaw_massacre_the_next_generation.jpg" alt="The Texas Chainsaw Massacre: The Next Generation">
+            <h4>The Texas Chainsaw Massacre: The Next Generation (1994)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Texas Chainsaw Massacre (2003)', '2003-10-17', 'Marcus Nispel', 'Remake dari film klasik 1974, mengikuti sekelompok remaja yang terjebak di rumah terpencil di Texas. Mereka menghadapi Leatherface dan keluarga Sawyer yang kanibal dalam perjalanan yang penuh teror.', 'Jessica Biel, Jonathan Tucker, Erica Leerhsen, Mike Vogel, Eric Balfour', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="texas_chainsaw_massacre.jpg" alt="The Texas Chainsaw Massacre (2003)">
+            <h4>The Texas Chainsaw Massacre (2003)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Texas Chainsaw Massacre: The Beginning (2006)', '2006-10-06', 'Jonathan Liebesman', 'Prequel yang menceritakan asal-usul Leatherface dan keluarga Sawyer. Sebuah keluarga terjebak di jalan terpencil di Texas pada tahun 1969, menghadapi keluarga kanibal yang brutal.', 'Jordana Brewster, Taylor Handley, Diora Baird, Matt Bomer, R. Lee Ermey', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="texas_chainsaw_massacre_the_beginning.jpg" alt="Texas Chainsaw Massacre: The Beginning">
+            <h4>Texas Chainsaw Massacre: The Beginning (2006)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Texas Chainsaw 3D (2013)', '2013-01-04', 'John Luessenhop', 'Heather Miller kembali ke rumah masa kecilnya di Texas untuk menghadapi masa lalu keluarga Sawyer. Dia menemukan bahwa Leatherface masih hidup dan mencari pembalasan.', 'Tania Raymonde, Trey Songz, Scott Eastwood, Alexandra Daddario, Tania Raymonde', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="texas_chainsaw_massacre_3d_ver2.jpg" alt="Texas Chainsaw (2013)">
+            <h4>Texas Chainsaw (2013)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Texas Chainsaw Massacre (2022)', '2022-02-18', 'David Blue Garcia', 'Sebuah kelompok remaja terjebak di rumah terpencil di Texas selama pandemi, di mana mereka menghadapi Leatherface yang kembali. Mereka harus bertarung untuk bertahan hidup dari ancaman kanibal.', 'Sarah Yarkin, Elsie Fisher, Mark Burnham, Moe Dunford, Nell Hudson', 'https://www.youtube.com/embed/8dgyx5aJr5E', 'Disney+')">
+            <img src="texas_chainsaw_massacre_ver2.jpg" alt="Texas Chainsaw Massacre (2022)">
+            <h4>Texas Chainsaw Massacre (2022)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- FRANKENSTEIN -->
+<div id="frankenstein" class="franchise-section">
+    <h2 class="section-title">Frankenstein</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Frankenstein...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick='openModal("Frankenstein (1931)", "1931-11-21", "James Whale", "Seorang ilmuwan ambisius, Dr. Henry Frankenstein, menciptakan makhluk dari potongan mayat dan memberinya kehidupan. Penemuan ini berujung pada tragedi ketika makhluk itu menghadapi penolakan dan kekerasan dari masyarakat.", "Colin Clive, Mae Clarke, Boris Karloff", "")'>
+            <img src="Frankenstein (1931).jpg" alt="Frankenstein">
+            <h4>Frankenstein (1931)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Bride of Frankenstein (1935)", "1935-03-14", "James Whale", "Setelah eksperimen sebelumnya, ilmuwan mencoba menciptakan pasangan untuk makhluk yang diciptakan Frankenstein. Hasilnya adalah penciptaan Bride, yang menimbulkan dilema moral dan kekacauan lebih lanjut.", "Boris Karloff, Colin Clive, Elsa Lanchester", "")'>
+            <img src="Bride of Frankenstein (1935).jpg" alt="Bride of Frankenstein">
+            <h4>Bride of Frankenstein (1935)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Son of Frankenstein (1939)", "1939-10-13", "Rowland V. Lee", "Anak Frankenstein kembali ke kastil keluarga untuk menghadapi warisan dan konsekuensi dari eksperimen ayahnya. Ketika makhluk dan misteri lama muncul, kegelapan masa lalu kembali menghantui mereka.", "Boris Karloff, Basil Rathbone, Bela Lugosi", "")'>
+            <img src="Son of Frankenstein (1939).jpg" alt="Son of Frankenstein">
+            <h4>Son of Frankenstein (1939)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Ghost of Frankenstein (1942)", "1942-01-01", "Erle C. Kenton", "Ketika doktor mencoba menghidupkan kembali makhluk Frankenstein, kekuatan supranatural dan konsekuensi eksperimen ilmiah menempatkan semua orang dalam bahaya.", "Lon Chaney Jr., Boris Karloff, Lionel Atwill", "")'>
+            <img src="Ghost of Frankenstein (1942).jpg" alt="Ghost of Frankenstein">
+            <h4>Ghost of Frankenstein (1942)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Frankenstein Meets the Wolf Man (1943)", "1943-09-24", "Roy William Neill", "Dua ikon horor klasik bertemu ketika makhluk Frankenstein dan Wolf Man berinteraksi, membawa bencana dan konflik antara monster serta manusia di sekitarnya.", "Lon Chaney Jr., Bela Lugosi, Claude Rains", "")'>
+            <img src="Frankenstein Meets the Wolf Man (1943).jpg" alt="Frankenstein Meets the Wolf Man">
+            <h4>Frankenstein Meets the Wolf Man (1943)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("House of Frankenstein (1944)", "1944-01-01", "Erle C. Kenton", "Beberapa makhluk horor berkumpul dalam satu cerita ketika seorang ilmuwan gila mencoba mengumpulkan kekuatan supranatural dengan menggunakan eksperimen yang mengerikan.", "Boris Karloff, Lon Chaney Jr., John Carradine", "")'>
+            <img src="House of Frankenstein (1944).jpg" alt="House of Frankenstein">
+            <h4>House of Frankenstein (1944)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("House of Dracula (1945)", "1945-01-01", "Erle C. Kenton", "Dalam rangkaian kejadian supranatural, karakter-karakter klasik bertemu kembali ketika kekuatan gelap bangkit dan mengancam ketenangan masyarakat.", "John Carradine, Lon Chaney Jr., Glenn Strange", "")'>
+            <img src="House of Dracula (1945).jpg" alt="House of Dracula">
+            <h4>House of Dracula (1945)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Abbott and Costello Meet Frankenstein (1948)", "1948-02-12", "Charles Barton", "Komedi horor ketika duo komedian Abbott dan Costello secara tak sengaja terlibat dalam urusan makhluk-makhluk klasik seperti Frankenstein dan Dracula, menghasilkan situasi lucu namun menegangkan.", "Bud Abbott, Lou Costello, Lon Chaney Jr., Bela Lugosi", "")'>
+            <img src="Abbott and Costello Meet Frankenstein (1948).jpg" alt="Abbott and Costello Meet Frankenstein">
+            <h4>Abbott and Costello Meet Frankenstein (1948)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("The Curse of Frankenstein (1957)", "1957-05-10", "Terence Fisher", "Adaptasi Hammer yang memperkenalkan versi baru dari kisah Frankenstein, menampilkan nuansa gelap dan penuh darah serta penekanan pada konsekuensi moral dari eksperimen manusia.", "Peter Cushing, Christopher Lee", "")'>
+            <img src="The Curse of Frankenstein (1957).jpg" alt="The Curse of Frankenstein">
+            <h4>The Curse of Frankenstein (1957)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Frankenstein Created Woman (1967)", "1967-08-01", "Terence Fisher", "Sebuah cerita yang menjelajahi ulang konsep kehidupan buatan dan identitas ketika seseorang mencoba menciptakan kembali jiwa dan tubuh melalui metode eksperimen gelap.", "Peter Cushing, Susan Denberg", "")'>
+            <img src="Frankenstein Created Woman (1967).jpg" alt="Frankenstein Created Woman">
+            <h4>Frankenstein Created Woman (1967)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Mary Shelley&#39;s Frankenstein (1994)", "1994-11-25", "Kenneth Branagh", "Adaptasi dari novel Mary Shelley yang menampilkan versi sinematik dan setia pada beberapa elemen novel, menampilkan drama antara pencipta dan ciptaan.", "Kenneth Branagh, Robert De Niro, Helena Bonham Carter", "")'>
+            <img src="Mary Shelley's Frankenstein (1994).jpg" alt="Mary Shelley's Frankenstein">
+            <h4>Mary Shelley's Frankenstein (1994)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Victor Frankenstein (2015)", "2015-11-25", "Paul McGuigan", "Pendekatan baru pada kisah klasik, berfokus pada hubungan antara ilmuwan Victor Frankenstein dan asistennya Igor, serta konsekuensi eksperimennya.", "James McAvoy, Daniel Radcliffe, Jessica Brown Findlay", "")'>
+            <img src="Victor Frankenstein (2015).jpg" alt="Victor Frankenstein">
+            <h4>Victor Frankenstein (2015)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Frankenstein (2025)", "2025-01-01", "Guillermo del Toro", "Versi modern dari kisah Frankenstein yang menempatkan konflik etika sains di era kontemporer.", "Oscar Isaac", "")'>
+            <img src="Frankenstein (2025).jpg" alt="Frankenstein (2025)">
+            <h4>Frankenstein (2025)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("The Bride (2026)", "2026-03-06", "Maggie Gyllenhaal", "Film modern yang menafsirkan kembali legenda Frankenstein dengan pendekatan kontemporer terhadap etika penciptaan kehidupan dan hubungan antara pencipta dan ciptaannya.", "Christian Bale", "")'>
+            <img src="The Bride (2026).jpg" alt="The Bride (2026)">
+            <h4>The Bride (2026)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- TERMINATOR -->
+<div id="terminator" class="franchise-section">
+    <h2 class="section-title">Terminator</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Terminator...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick="openModal('The Terminator (1984)', '1984-10-26', 'James Cameron', 'Seorang cyborg pembunuh dari masa depan dikirim untuk membunuh Sarah Connor, ibu dari pemimpin perlawanan manusia melawan mesin.', 'Arnold Schwarzenegger, Linda Hamilton, Michael Biehn', 'https://www.youtube.com/embed/k64P4l2Wmeg', 'TBA')">
+            <img src="terminator.jpg" alt="The Terminator">
+            <h4>The Terminator (1984)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Terminator 2: Judgment Day (1991)', '1991-07-03', 'James Cameron', 'John Connor mengirim Kyle Reese kembali ke masa lalu untuk melindungi ibunya dari Terminator baru yang lebih canggih.', 'Arnold Schwarzenegger, Linda Hamilton, Edward Furlong', 'https://www.youtube.com/embed/CRRlbK5w8AE', 'TBA')">
+            <img src="terminator_two_judgement_day.jpg" alt="Terminator 2: Judgment Day">
+            <h4>Terminator 2: Judgment Day (1991)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Terminator 3: Rise of the Machines (2003)', '2003-07-02', 'Jonathan Mostow', 'John Connor dewasa harus menghadapi ancaman baru dari Skynet yang mencoba menghancurkan umat manusia.', 'Arnold Schwarzenegger, Nick Stahl, Claire Danes', 'https://www.youtube.com/embed/OYdTDL8z1wU', 'TBA')">
+            <img src="terminator_three_rise_of_the_machines_ver3.jpg" alt="Terminator 3: Rise of the Machines">
+            <h4>Terminator 3: Rise of the Machines (2003)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Terminator Salvation (2009)', '2009-05-21', 'McG', 'Di masa depan perang melawan mesin, John Connor bergabung dengan perlawanan untuk menghentikan Skynet.', 'Christian Bale, Sam Worthington, Anton Yelchin', 'https://www.youtube.com/embed/4RGhbfKPLbg', 'TBA')">
+            <img src="terminator_salvation_ver2.jpg" alt="Terminator 4: Salvation">
+            <h4>Terminator Salvation (2009)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Terminator Genisys (2015)', '2015-07-01', 'Alan Taylor', 'Kyle Reese dikirim ke masa lalu untuk melindungi Sarah Connor, tetapi menemukan timeline yang berubah.', 'Arnold Schwarzenegger, Jason Clarke, Emilia Clarke', 'https://www.youtube.com/embed/RhW3cBvBJKo', 'TBA')">
+            <img src="terminator_genisys.jpg" alt="Terminator Genisys">
+            <h4>Terminator Genisys (2015)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Terminator: Dark Fate (2019)', '2019-11-01', 'Tim Miller', 'Sarah Connor dan Grace bergabung untuk menghentikan Terminator baru yang dikirim untuk membunuh Dani.', 'Linda Hamilton, Arnold Schwarzenegger, Mackenzie Davis', 'https://www.youtube.com/embed/jCyEX6u-Yhs', 'TBA')">
+            <img src="terminator_dark_fate_ver4.jpg" alt="Terminator: Dark Fate">
+            <h4>Terminator: Dark Fate (2019)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- JAWS -->
+<div id="jaws" class="franchise-section">
+    <h2 class="section-title">Jaws</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Jaws...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick="openModal('Jaws (1975)', '1975-06-20', 'Steven Spielberg', 'Seokor hiu putih raksasa mulai menyerang pantai Amity Island di musim panas. Seorang polisi, peneliti, dan pemburu hiu bekerja sama untuk menangkap dan menghentikan binatang pembunuh yang mengerikan sebelum lebih banyak nyawa hilang.', 'Roy Scheider, Robert Shaw, Richard Dreyfuss', 'https://www.youtube.com/embed/U1fu_sA7XSY', '')">
+            <img src="jaws.jpg" alt="Jaws">
+            <h4>Jaws (1975)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Jaws 2 (1978)', '1978-06-16', 'Jeannot Szwarc', 'Enam tahun setelah insiden pertama, seorang hiu besar lainnya mulai mengancam Amity Island sekali lagi. Martin Brody harus menghadapi ketakutannya dan menyelamatkan penduduk pantai dari ancaman laut yang misterius dalam pertempuran sengit melawan predator laut.', 'Roy Scheider, Lorraine Gary, Murray Hamilton', 'https://www.youtube.com/embed/MU0T7N8SJJg', '')">
+            <img src="jaws_two_ver3.jpg" alt="Jaws 2">
+            <h4>Jaws 2 (1978)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Jaws 3 (1983)', '1983-07-22', 'Joe Alves', 'Di taman hiburan bawah laut, seekor hiu besar misterius mulai menakuti pengunjung dan staf. Anak dari Martin Brody harus menggunakan teknologi canggih untuk menangkap dan membunuh hiu dalam lingkungan yang terkurung dan berbahaya.', 'Dennis Quaid, Bess Armstrong, Simon MacCorkindale', 'https://www.youtube.com/embed/p-B_O8yxM0g', '')">
+            <img src="jaws_3d.jpg" alt="Jaws 3">
+            <h4>Jaws 3 (1983)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Jaws: The Revenge (1987)', '1987-07-18', 'Joseph Sargent', 'Istri Martin Brody percaya bahwa hiu memiliki dendam pribadi pada keluarganya setelah kematian suaminya. Dia pindah ke pulau tropis tetapi hiu terus mengejarnya dan keluarganya dalam petualangan supernatural yang penuh ketakutan di laut yang gelap.', 'Lorraine Gary, Lance Guest, Mario Van Peebles', 'https://www.youtube.com/embed/zU82dXYNcSQ', '')">
+            <img src="jaws_the_revenge_ver2.jpg" alt="Jaws: The Revenge">
+            <h4>Jaws: The Revenge (1987)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- PREDATOR -->
+<div id="predator" class="franchise-section">
+    <h2 class="section-title">Predator</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Predator...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick="openModal('Predator (1987)', '1987-06-12', 'John McTiernan', 'Tim komando elit yang dipimpin oleh Major Dutch Schaefer berhadapan dengan pemburu asing yang canggih teknologinya di hutan Amerika Tengah. Mereka harus menggunakan kecerdikan dan kebersamaan untuk bertahan hidup melawan ancaman yang tak terlihat.', 'Arnold Schwarzenegger, Carl Weathers, Elpidia Carrillo, Bill Duke, Jesse Ventura', 'https://www.youtube.com/embed/X3B86lM5Lq8', 'TBA')">
+            <img src="predator (1).jpg" alt="Predator (1987)">
+            <h4>Predator (1987)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Predator 2 (1990)', '1990-11-21', 'Stephen Hopkins', 'Seorang detektif Los Angeles menemukan bahwa serangkaian pembunuhan brutal terkait dengan makhluk pemburu asing. Dalam panasnya kota, perburuan menjadi semakin berbahaya dan tak terduga.', 'Danny Glover, Gary Busey, Bill Paxton, Ruben Blades, Maria Conchita Alonso', 'https://www.youtube.com/embed/8q5rV3qLl4w', 'TBA')">
+            <img src="predator_two_ver1.jpg" alt="Predator 2">
+            <h4>Predator 2 (1990)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Predators (2010)', '2010-07-09', 'Nimród Antal', 'Sekelompok pembunuh bayaran dan tentara terdampar di sebuah planet asing dan menyadari mereka menjadi mangsa dalam arena perburuan Predator. Mereka harus bekerja sama untuk bertahan hidup dan mencari jalan keluar.', 'Adrien Brody, Topher Grace, Alice Braga, Walton Goggins, Oleg Taktarov', 'https://www.youtube.com/embed/0qN3TtQVjXE', 'TBA')">
+            <img src="predators.jpg" alt="Predators (2010)">
+            <h4>Predators (2010)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Predator (2018)', '2018-09-14', 'Shane Black', 'Seorang anak secara tidak sengaja mengaktifkan perangkat Predator yang hilang sehingga memicu kedatangan Predator yang lebih kuat ke Bumi. Sekelompok mantan tentara dan ilmuwan harus bersatu untuk menghentikan ancaman tersebut.', 'Boyd Holbrook, Olivia Munn, Trevante Rhodes, Keanu Reeves, Thomas Jane', 'https://www.youtube.com/embed/WaG1KZqrLvM', 'TBA')">
+            <img src="predator.jpg" alt="The Predator (2018)">
+            <h4>The Predator (2018)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Prey (2022)', '2022-08-05', 'Dan Trachtenberg', 'Di wilayah Comanche ratusan tahun lalu, seorang pejuang muda harus menghadapi Predator yang pertama kali datang ke Bumi. Kecerdikan dan keterampilan berburu diuji dalam pertempuran yang mendebarkan.', 'Amber Midthunder, Dakota Beavers, Stormee Kipp, Michelle Thrush, Julian Black Antelope', 'https://www.youtube.com/embed/wZ7LytagKlc', 'TBA')">
+            <img src="prey.jpg" alt="Prey (2022)">
+            <h4>Prey (2022)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Predator: Killer of Killers (2025)', '2025-06-06', 'Dan Trachtenberg', 'Seorang wanita muda di Amerika Barat Daya menjadi buruan saat ia bersilangan jalan dengan predator alien yang mematikan. Dalam perburuan yang mendebarkan, ia harus menggunakan kecerdasan dan keterampilan untuk bertahan hidup melawan ancaman luar angkasa.', 'Amber Midthunder, Dakota Beavers, Michelle Thrush, Julian Black Antelope, Stormee Kipp', '', 'TBA')">
+            <img src="predator_killer_of_killers.jpg" alt="Predator: Killer of Killers (2025)">
+            <h4>Predator: Killer of Killers (2025)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Predator: Badlands (2025)', '2025-11-07', 'TBA', 'TBA', 'TBA', '', 'TBA')">
+            <img src="predator_badlands_ver2.jpg" alt="Predator: Badlands (2025)">
+            <h4>Predator: Badlands (2025)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- CONJURING -->
+<div id="conjuring" class="franchise-section">
+    <h2 class="section-title">Conjuring</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Conjuring...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick="openModal('The Conjuring (2013)', '2013-07-19', 'James Wan', 'Berdasarkan kisah nyata keluarga Perron, yang mengalami gangguan supernatural di rumah pertanian mereka. Ed dan Lorraine Warren, penyelidik paranormal, dipanggil untuk membantu.', 'Vera Farmiga, Patrick Wilson, Lili Taylor', 'https://www.youtube.com/embed/k10ETZ41q5o', 'Disney+')">
+            <img src="the conjuring.jpg" alt="The Conjuring">
+            <h4>The Conjuring (2013)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Annabelle (2014)', '2014-10-03', 'John R. Leonetti', 'Sebuah pasangan mulai mengalami kejadian supernatural yang menakutkan melibatkan boneka antik tak lama setelah rumah mereka diserang oleh kultis setan.', 'Annabelle Wallis, Ward Horton, Tony Amendola', 'https://www.youtube.com/embed/paFgQNPGlsg', 'Disney+')">
+            <img src="annabelle.jpg" alt="Annabelle">
+            <h4>Annabelle (2014)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Conjuring 2 (2016)', '2016-06-10', 'James Wan', 'Ed dan Lorraine Warren pergi ke North London untuk membantu seorang ibu tunggal yang membesarkan empat anak yang mengalami aktivitas paranormal.', 'Vera Farmiga, Patrick Wilson, Madison Wolfe', 'https://www.youtube.com/embed/VFsmuRPClr4', 'Disney+')">
+            <img src="conjuring_two_ver2.jpg" alt="The Conjuring 2">
+            <h4>The Conjuring 2 (2016)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Annabelle: Creation (2017)', '2017-08-11', 'David F. Sandberg', 'Dua belas tahun setelah kematian tragis putri mereka, seorang pembuat boneka dan istrinya menyambut seorang biarawati dan beberapa gadis dari panti asuhan yang ditutup ke rumah mereka, di mana mereka menjadi sasaran ciptaan pembuat boneka yang kerasukan.', 'Stephanie Sigman, Talitha Bateman, Lulu Wilson', 'https://www.youtube.com/embed/KisPhy7T__Q', 'Disney+')">
+            <img src="annabelle_creation_ver2.jpg" alt="Annabelle: Creation">
+            <h4>Annabelle: Creation (2017)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Nun (2018)', '2018-09-07', 'Corin Hardy', 'Seorang imam dengan masa lalu yang penuh hantu dan seorang novis di ambang sumpah akhir mereka dikirim oleh Vatikan untuk menyelidiki kematian seorang biarawati muda di Rumania dan menghadapi kekuatan jahat dalam bentuk biarawati setan.', 'Demián Bichir, Taissa Farmiga, Jonas Bloquet', 'https://www.youtube.com/embed/pzD9zGcUNrw', 'Disney+')">
+            <img src="nun_ver2.jpg" alt="The Nun">
+            <h4>The Nun (2018)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Annabelle Comes Home (2019)', '2019-06-26', 'Gary Dauberman', 'Bertekad untuk mencegah Annabelle menyebabkan lebih banyak kerusakan, demonolog Ed dan Lorraine Warren membawa boneka yang kerasukan ke ruangan artefak terkunci di rumah mereka. Tetapi ketika Annabelle membangunkan roh jahat di ruangan itu, segera menjadi malam teror bagi putri pasangan itu.', 'Vera Farmiga, Patrick Wilson, Mckenna Grace', 'https://www.youtube.com/embed/bCxm7cTpBAs', 'Disney+')">
+            <img src="annabelle_comes_home_ver2.jpg" alt="Annabelle Comes Home">
+            <h4>Annabelle Comes Home (2019)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Curse of La Llorona (2019)', '2019-04-19', 'Michael Chaves', 'Mengabaikan peringatan menyeramkan dari seorang ibu yang bermasalah yang diduga membahayakan anak, seorang pekerja sosial dan anak-anaknya sendiri menjadi sasaran berikutnya dari kekuatan supernatural yang dendam.', 'Linda Cardellini, Raymond Cruz, Patricia Velásquez', 'https://www.youtube.com/embed/3N9UqF02TyM', 'Disney+')">
+            <img src="curse_of_la_llorona.jpg" alt="The Curse of La Llorona">
+            <h4>The Curse of La Llorona (2019)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Conjuring: The Devil Made Me Do It (2021)', '2021-06-04', 'Michael Chaves', 'The Warrens menyelidiki pembunuhan dan serangkaian kerasukan setan yang mungkin terkait dengan kultus setan.', 'Vera Farmiga, Patrick Wilson, Ruairi O\'Connor', 'https://www.youtube.com/embed/h9Q4zZS2v1k', 'Disney+')">
+            <img src="conjuring_the_devil_made_me_do_it.jpg" alt="The Conjuring: The Devil Made Me Do It">
+            <h4>The Conjuring: The Devil Made Me Do It (2021)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Nun II (2023)', '2023-09-08', 'Michael Chaves', 'Di Prancis 1956, seorang imam dibunuh, dan Suster Irene sekali lagi berhadapan muka dengan Valak, biarawati setan.', 'Taissa Farmiga, Jonas Bloquet, Storm Reid', 'https://www.youtube.com/embed/QF-oyCwaArU', 'Disney+')">
+            <img src="nun_ii_ver3.jpg" alt="The Nun II">
+            <h4>The Nun II (2023)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Conjuring: Last Rites (2025)', '2025-01-01', 'TBA', 'Detail rilis dan synopsis akan ditambahkan nanti.', 'TBA', '', 'TBA')">
+            <img src="conjuring_last_rites.jpg" alt="The Conjuring: Last Rites">
+            <h4>The Conjuring: Last Rites (2025)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- PLANET OF THE APES -->
+<div id="planetoftheapes" class="franchise-section">
+    <h2 class="section-title">Planet of the Apes</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Planet of the Apes...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick='openModal("Planet of the Apes (1968)", "1968-02-08", "Franklin J. Schaffner", "Seorang astronot manusia bernama George Taylor terbangun di planet yang dikuasai oleh kera cerdas setelah kecelakaan pesawatnya. Dia menemukan bahwa manusia di planet ini adalah spesies yang terbelakang dan diperlakukan sebagai binatang oleh kera.", "Charlton Heston, Roddy McDowall, Kim Hunter, Maurice Evans, James Whitmore", "https://www.youtube.com/embed/8dgyx5aJr5E", "Disney+")'>
+            <img src="planet_of_the_apes 1968.jpg" alt="Planet of the Apes">
+            <h4>Planet of the Apes (1968)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Beneath the Planet of the Apes (1970)", "1970-05-26", "Ted Post", "Taylor dan Nova kembali ke planet kera untuk mencari sumber misterius sinyal radio. Mereka menemukan kota bawah tanah manusia yang selamat dari perang nuklir, tetapi juga ancaman yang lebih besar.", "Charlton Heston, James Franciscus, Linda Harrison, Maurice Evans, Kim Hunter", "https://www.youtube.com/embed/8dgyx5aJr5E", "Disney+")'>
+            <img src="beneath_the_planet_of_the_apes.jpg" alt="Beneath the Planet of the Apes">
+            <h4>Beneath the Planet of the Apes (1970)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Escape from the Planet of the Apes (1971)", "1971-05-21", "Don Taylor", "Dua kera cerdas dari masa depan, Zira dan Cornelius, melarikan diri ke Bumi masa kini. Mereka mencoba memperingatkan umat manusia tentang takdir planet mereka, tetapi dihadapkan dengan skeptisisme dan bahaya.", "Roddy McDowall, Kim Hunter, Bradford Dillman, Natalie Trundy, Eric Braeden", "https://www.youtube.com/embed/8dgyx5aJr5E", "Disney+")'>
+            <img src="escape_from_the_planet_of_the_apes.jpg" alt="Escape from the Planet of the Apes">
+            <h4>Escape from the Planet of the Apes (1971)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Conquest of the Planet of the Apes (1972)", "1972-06-29", "J. Lee Thompson", "Caesar, anak Zira dan Cornelius, tumbuh di Bumi dan menyaksikan diskriminasi terhadap kera. Dia memimpin pemberontakan kera melawan manusia untuk mendapatkan kebebasan.", "Roddy McDowall, Don Murray, Ricardo Montalban, Natalie Trundy, Hari Rhodes", "https://www.youtube.com/embed/8dgyx5aJr5E", "Disney+")'>
+            <img src="conquest_of_the_planet_of_the_apes.jpg" alt="Conquest of the Planet of the Apes">
+            <h4>Conquest of the Planet of the Apes (1972)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Battle for the Planet of the Apes (1973)", "1973-06-15", "J. Lee Thompson", "Caesar memimpin kera dalam perang melawan sisa-sisa umat manusia. Dia berusaha mencapai perdamaian, tetapi dihadapkan dengan ancaman dari kedua sisi.", "Roddy McDowall, Claude Akins, Natalie Trundy, Severn Darden, Lew Ayres", "https://www.youtube.com/embed/8dgyx5aJr5E", "Disney+")'>
+            <img src="battle_for_the_planet_of_the_apes.jpg" alt="Battle for the Planet of the Apes">
+            <h4>Battle for the Planet of the Apes (1973)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Planet of the Apes (2001)", "2001-07-27", "Tim Burton", "Seorang astronot terbangun di planet di mana kera berbicara dan manusia bisu. Dia bergabung dengan pemberontak manusia untuk melawan tirani kera.", "Mark Wahlberg, Tim Roth, Helena Bonham Carter, Michael Clarke Duncan, Paul Giamatti", "https://www.youtube.com/embed/8dgyx5aJr5E", "Disney+")'>
+            <img src="planet_of_the_apes_ver2 2001.jpg" alt="Planet of the Apes">
+            <h4>Planet of the Apes (2001)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Rise of the Planet of the Apes (2011)", "2011-08-05", "Rupert Wyatt", "Seorang ilmuwan menciptakan obat untuk penyakit Alzheimer, tetapi efek sampingnya membuat kera menjadi cerdas. Seekor kera bernama Caesar memimpin pemberontakan kera melawan manusia.", "James Franco, Andy Serkis, Freida Pinto, Karin Konoval, Terry Notary", "https://www.youtube.com/embed/8dgyx5aJr5E", "Disney+")'>
+            <img src="rise_of_the_planet_of_the_apes__ver3.jpg" alt="Rise of the Planet of the Apes">
+            <h4>Rise of the Planet of the Apes (2011)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Dawn of the Planet of the Apes (2014)", "2014-07-11", "Matt Reeves", "Sepuluh tahun setelah pemberontakan, Caesar memimpin komunitas kera yang hidup damai. Tetapi ketika manusia kembali, konflik muncul dan perang antara spesies dimulai.", "Andy Serkis, Jason Clarke, Gary Oldman, Keri Russell, Toby Kebbell", "https://www.youtube.com/embed/8dgyx5aJr5E", "Disney+")'>
+            <img src="dawn_of_the_planet_of_the_apes_ver6.jpg" alt="Dawn of the Planet of the Apes">
+            <h4>Dawn of the Planet of the Apes (2014)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("War for the Planet of the Apes (2017)", "2017-07-14", "Matt Reeves", "Caesar dan kera lainnya melarikan diri dari kamp manusia. Mereka menghadapi pemimpin manusia yang kejam dan berusaha mencapai tempat aman, sambil menghadapi pengkhianatan internal.", "Andy Serkis, Woody Harrelson, Steve Zahn, Karin Konoval, Amiah Miller", "https://www.youtube.com/embed/8dgyx5aJr5E", "Disney+")'>
+            <img src="war_for_the_planet_of_the_apes.jpg" alt="War for the Planet of the Apes">
+            <h4>War for the Planet of the Apes (2017)</h4>
+        </div>
+        <div class="film-card" onclick='openModal("Kingdom of the Planet of the Apes (2024)", "2024-05-10", "Wes Ball", "Berabad-abad setelah Caesar, kera telah mendominasi dunia. Seekor kera muda bernama Noa menemukan manusia yang bisa berbicara dan harus memutuskan nasib spesiesnya.", "Owen Teague, Freya Allan, Kevin Durand, Peter Macon, William H. Macy", "https://www.youtube.com/embed/8dgyx5aJr5E", "Disney+")'>
+            <img src="kingdom_of_the_planet_of_the_apes_ver10.jpg" alt="Kingdom of the Planet of the Apes">
+            <h4>Kingdom of the Planet of the Apes (2024)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- JURASSIC PARK -->
+<div id="jurassicpark" class="franchise-section">
+    <h2 class="section-title">Jurassic Park</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Jurassic Park...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick="openModal('Jurassic Park (1993)', '1993-06-11', 'Steven Spielberg', 'Seorang paleontolog pragmatis yang mengunjungi taman hiburan yang hampir selesai ditugaskan untuk melindungi sepasang anak setelah kegagalan listrik menyebabkan dinosaurus kloning taman berlari bebas.', 'Sam Neill, Laura Dern, Jeff Goldblum, Richard Attenborough', 'https://www.youtube.com/embed/lc0UehYemQA', 'Disney+')">
+            <img src="jurassic_park_ver2.jpg" alt="Jurassic Park">
+            <h4>Jurassic Park (1993)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('The Lost World: Jurassic Park (1997)', '1997-05-23', 'Steven Spielberg', 'Tim peneliti dikirim ke Situs B Jurassic Park untuk mempelajari dinosaurus di sana, tetapi ketika mereka tiba, mereka menemukan bahwa dinosaurus telah melarikan diri dan membuat kekacauan di pulau itu.', 'Jeff Goldblum, Julianne Moore, Pete Postlethwaite, Richard Attenborough', 'https://www.youtube.com/embed/ROdD2fEB7L0', 'Disney+')">
+            <img src="lost_world_jurassic_park_ver2.jpg" alt="The Lost World: Jurassic Park">
+            <h4>The Lost World: Jurassic Park (1997)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Jurassic Park III (2001)', '2001-07-18', 'Joe Johnston', 'Pasangan kaya menyewa pilot charter untuk membawa mereka ke Isla Sorna, di mana putra mereka terdampar dengan sekelompok remaja setelah kecelakaan pesawat. Mereka segera menemukan bahwa pulau itu dihuni oleh dinosaurus yang direkayasa secara genetik.', 'Sam Neill, William H. Macy, Téa Leoni, Alessandro Nivola', 'https://www.youtube.com/embed/bE8xKU8O5nE', 'Disney+')">
+            <img src="jurassic_park_iii_ver2.jpg" alt="Jurassic Park III">
+            <h4>Jurassic Park III (2001)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Jurassic World (2015)', '2015-06-12', 'Colin Trevorrow', 'Dua puluh dua tahun setelah peristiwa Jurassic Park, Isla Nublar sekarang menampilkan taman hiburan dinosaurus yang berfungsi penuh, Jurassic World, seperti yang awalnya dibayangkan oleh John Hammond.', 'Chris Pratt, Bryce Dallas Howard, Irrfan Khan, Vincent D\'Onofrio', 'https://www.youtube.com/embed/RFinNxS5KN4', 'Disney+')">
+            <img src="jurassic_world_ver5.jpg" alt="Jurassic World">
+            <h4>Jurassic World (2015)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Jurassic World: Fallen Kingdom (2018)', '2018-06-22', 'J.A. Bayona', 'Ketika gunung berapi pulau yang tidak aktif mulai hidup, Owen dan Claire memulai kampanye untuk menyelamatkan dinosaurus yang tersisa dari peristiwa tingkat kepunahan ini.', 'Chris Pratt, Bryce Dallas Howard, Rafe Spall, Justice Smith', 'https://www.youtube.com/embed/vn9mMeWcgoM', 'Disney+')">
+            <img src="jurassic_world_fallen_kingdom_ver3.jpg" alt="Jurassic World: Fallen Kingdom">
+            <h4>Jurassic World: Fallen Kingdom (2018)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Jurassic World Dominion (2022)', '2022-06-10', 'Colin Trevorrow', 'Empat tahun setelah kehancuran Isla Nublar, dinosaurus sekarang hidup—dan berburu—bersama manusia di seluruh dunia. Keseimbangan rapuh ini akan membentuk ulang masa depan dan menentukan, sekali dan untuk semua, apakah manusia akan tetap menjadi predator puncak di planet yang sekarang mereka bagi dengan makhluk paling menakutkan dalam sejarah.', 'Chris Pratt, Bryce Dallas Howard, Laura Dern, Sam Neill', 'https://www.youtube.com/embed/fb5ELWi-ekk', 'Disney+')">
+            <img src="jurassic_world_dominion_ver6.jpg" alt="Jurassic World Dominion">
+            <h4>Jurassic World Dominion (2022)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Jurassic World Rebirth (2025)', '2025-07-02', 'Gareth Edwards', 'Detail rilis dan synopsis akan ditambahkan nanti.', 'Scarlett Johansson, Jonathan Bailey, BD Wong', '', 'TBA')">
+            <img src="jurassic_world_rebirth_ver2.jpg" alt="Jurassic World Rebirth">
+            <h4>Jurassic World Rebirth (2025)</h4>
+        </div>
+    </div>
+</div>
+
+<!-- SCREAM -->
+<div id="scream" class="franchise-section">
+    <h2 class="section-title">Scream</h2>
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Cari film Scream...">
+    </div>
+    <div class="film-grid">
+        <div class="film-card" onclick="openModal('Scream (1996)', '1996-12-20', 'Wes Craven', 'Seorang gadis remaja bernama Sidney Prescott menjadi sasaran pembunuh misterius yang mengenakan topeng Ghostface. Bersama teman-temannya, dia harus mengungkap identitas pembunuh sebelum menjadi korban berikutnya dalam serangkaian pembunuhan yang terinspirasi dari film horor.', 'Neve Campbell, David Arquette, Courteney Cox', 'https://www.youtube.com/embed/6z2cNdS3XrM', 'Disney+')">
+            <img src="scream.jpg" alt="Scream (1996)">
+            <h4>Scream (1996)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Scream 2 (1997)', '1997-12-12', 'Wes Craven', 'Dua tahun setelah peristiwa pertama, Sidney Prescott pindah ke perguruan tinggi dan kembali menjadi sasaran pembunuh Ghostface yang tampaknya terinspirasi dari sekuel film horor.', 'Neve Campbell, David Arquette, Courteney Cox', 'https://www.youtube.com/embed/8btZ_8Tb0TQ', 'Disney+')">
+            <img src="scream_two_ver4.jpg" alt="Scream 2 (1997)">
+            <h4>Scream 2 (1997)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Scream 3 (2000)', '2000-02-04', 'Wes Craven', 'Sidney Prescott terlibat dalam pembuatan film horor berdasarkan pengalamannya, tetapi pembunuh Ghostface kembali muncul untuk menyelesaikan cerita.', 'Neve Campbell, David Arquette, Courteney Cox', 'https://www.youtube.com/embed/9vWy_s2XGEM', 'Disney+')">
+            <img src="scream3_ver1.jpg" alt="Scream 3 (2000)">
+            <h4>Scream 3 (2000)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Scream 4 (2011)', '2011-04-15', 'Wes Craven', 'Sepuluh tahun kemudian, Sidney kembali ke Woodsboro dan pembunuh Ghostface muncul lagi, kali ini dengan twist baru yang melibatkan media sosial.', 'Neve Campbell, David Arquette, Courteney Cox', 'https://www.youtube.com/embed/9vWy_s2XGEM', 'Disney+')">
+            <img src="scream_four_ver2.jpg" alt="Scream 4 (2011)">
+            <h4>Scream 4 (2011)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Scream (2022)', '2022-01-14', 'Matt Bettinelli-Olpin, Tyler Gillett', 'Dua puluh lima tahun setelah pembantaian Woodsboro, pembunuh Ghostface kembali menyerang generasi baru siswa SMA.', 'Neve Campbell, David Arquette, Courteney Cox, Melissa Barrera', 'https://www.youtube.com/embed/beToTslH17s', 'Disney+')">
+            <img src="scream_ver4.jpg" alt="Scream (2022)">
+            <h4>Scream (2022)</h4>
+        </div>
+        <div class="film-card" onclick="openModal('Scream VI (2023)', '2023-03-10', 'Matt Bettinelli-Olpin, Tyler Gillett', 'Para penyintas dari Ghostface pindah ke New York City, tetapi pembunuh itu mengikuti mereka dengan dendam baru.', 'Courteney Cox, Melissa Barrera, Jenna Ortega', 'https://www.youtube.com/embed/h74AXKwXVug', 'Disney+')">
+            <img src="scream_six_ver4.jpg" alt="Scream VI (2023)">
+            <h4>Scream VI (2023)</h4>
+        </div>
+    </div>
+</div>
+
+<script>
+function showFranchise(franchiseName, button) {
+    // Sembunyikan semua section
+    const sections = document.querySelectorAll('.franchise-section');
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+
+    // Hapus active dari semua button
+    const buttons = document.querySelectorAll('.franchise-btn');
+    buttons.forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // Tampilkan section yang dipilih
+    document.getElementById(franchiseName).classList.add('active');
+
+    // Tandai button yang aktif
+    button.classList.add('active');
+}
+
+// Search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInputs = document.querySelectorAll('.search-input');
+    
+    searchInputs.forEach(input => {
+        input.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const franchiseSection = this.closest('.franchise-section');
+            const filmCards = franchiseSection.querySelectorAll('.film-card');
+            
+            filmCards.forEach(card => {
+                const filmTitle = card.querySelector('h4').textContent.toLowerCase();
+                
+                if (filmTitle.includes(searchTerm)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
+    });
+});
+
+// Modal functionality
+function getYouTubeEmbedUrl(url) {
+    if (!url) return null;
+    // Trim whitespace
+    url = url.trim();
+    // If it's already just an ID (11 chars typical), return embed
+    const idOnlyMatch = url.match(/^([A-Za-z0-9_-]{11})$/);
+    if (idOnlyMatch) return 'https://www.youtube.com/embed/' + idOnlyMatch[1] + '?rel=0';
+
+    try {
+        const u = new URL(url, window.location.href);
+        const host = u.hostname.toLowerCase();
+
+        // watch?v=... style
+        if (host.includes('youtube.com')) {
+            const v = u.searchParams.get('v');
+            if (v) return 'https://www.youtube.com/embed/' + v + '?rel=0';
+            // /embed/....
+            const embedMatch = u.pathname.match(/\/embed\/([A-Za-z0-9_-]{11})/);
+            if (embedMatch) return 'https://www.youtube.com/embed/' + embedMatch[1] + '?rel=0';
+        }
+
+        // youtu.be short link
+        if (host === 'youtu.be') {
+            const id = u.pathname.replace('/', '');
+            if (id) return 'https://www.youtube.com/embed/' + id + '?rel=0';
+        }
+    } catch (e) {
+        // not a valid URL — fallthrough to pattern checks below
+    }
+
+    // Try to extract an ID from common patterns anywhere in the string
+    const anyId = url.match(/([A-Za-z0-9_-]{11})/);
+    if (anyId) return 'https://www.youtube.com/embed/' + anyId[1] + '?rel=0';
+
+    return null;
+}
+
+function openModal(title, releaseDate, director, synopsis, cast, trailerUrl, platform) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalRelease').textContent = 'Tanggal Rilis: ' + releaseDate;
+    document.getElementById('modalDirector').textContent = 'Sutradara: ' + director;
+    document.getElementById('modalSynopsis').textContent = synopsis;
+    document.getElementById('modalCast').textContent = cast;
+
+    // Set platform if provided
+    const platformElement = document.getElementById('modalPlatform');
+    if (platform && platform.trim() !== '') {
+        platformElement.textContent = 'Platform: ' + platform;
+        platformElement.style.display = 'block';
+    } else {
+        platformElement.style.display = 'none';
+    }
+
+    // Clear previous trailer and external link
+    const trailerContainer = document.getElementById('trailerContainer');
+    trailerContainer.innerHTML = '';
+    const modalTrailer = document.getElementById('modalTrailer');
+    // remove old external link if any
+    const oldLink = document.getElementById('trailerExternalLink');
+    if (oldLink) oldLink.remove();
+
+    // Normalize to embed URL if possible
+    const embedUrl = getYouTubeEmbedUrl(trailerUrl);
+    if (embedUrl) {
+        const iframe = document.createElement('iframe');
+        iframe.src = embedUrl;
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        trailerContainer.appendChild(iframe);
+    } else if (trailerUrl && trailerUrl.trim() !== '') {
+        // If we couldn't produce an embed but there's a URL/ID, show a friendly message
+        trailerContainer.textContent = 'Embed tidak tersedia untuk trailer ini.';
+    } else {
+        trailerContainer.textContent = 'Trailer tidak tersedia.';
+    }
+
+    // Always add a fallback link to open on YouTube when a trailer string was provided
+    if (trailerUrl && trailerUrl.trim() !== '') {
+        // Build a safe watch URL (try to extract id)
+        let watchUrl = trailerUrl.trim();
+        try {
+            const u = new URL(trailerUrl, window.location.href);
+            if (u.hostname.includes('youtube.com') && u.searchParams.get('v')) {
+                watchUrl = 'https://www.youtube.com/watch?v=' + u.searchParams.get('v');
+            } else if (u.hostname === 'youtu.be') {
+                const id = u.pathname.replace('/', '');
+                watchUrl = 'https://www.youtube.com/watch?v=' + id;
+            } else if (u.hostname.includes('youtube.com') && u.pathname.startsWith('/embed/')) {
+                const m = u.pathname.match(/\/embed\/([A-Za-z0-9_-]{11})/);
+                if (m) watchUrl = 'https://www.youtube.com/watch?v=' + m[1];
+            }
+        } catch (e) {
+            // not a full URL — try to extract id
+            const anyId = trailerUrl.match(/([A-Za-z0-9_-]{11})/);
+            if (anyId) watchUrl = 'https://www.youtube.com/watch?v=' + anyId[1];
+        }
+
+        const link = document.createElement('a');
+        link.id = 'trailerExternalLink';
+        link.className = 'modal-trailer-link';
+        link.href = watchUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = 'Buka di YouTube';
+        modalTrailer.appendChild(link);
+    }
+
+    document.getElementById('filmModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    const trailerContainer = document.getElementById('trailerContainer');
+    trailerContainer.innerHTML = '';
+    const oldLink = document.getElementById('trailerExternalLink');
+    if (oldLink) oldLink.remove();
+    document.getElementById('filmModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById('filmModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+</script>
+
+<!-- MODAL DETAIL FILM -->
+<div id="filmModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2 class="modal-title" id="modalTitle">Film Title</h2>
+        <div class="modal-release" id="modalRelease">Release Date: </div>
+        <div class="modal-director" id="modalDirector">Director: </div>
+        <div class="modal-platform" id="modalPlatform" style="display: none;">Platform: </div>
+        <div class="modal-synopsis" id="modalSynopsis">Sinopsis akan ditampilkan di sini...</div>
+        <div class="modal-section-title">Pemain</div>
+        <div class="modal-cast" id="modalCast">Daftar pemain akan ditampilkan di sini...</div>
+        <div class="modal-section-title">Trailer</div>
+        <div class="modal-trailer" id="modalTrailer">
+            <div class="modal-trailer-container" id="trailerContainer"></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
